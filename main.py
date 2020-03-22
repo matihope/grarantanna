@@ -1,10 +1,9 @@
 import pygame
-import random
-import math
+from pygame.locals import *
 from games.grarantanna import grarantanna_game
 
 WIDTH, HEIGHT = 1200, 800
-win = pygame.display.set_mode((WIDTH, HEIGHT))
+win = pygame.display.set_mode((WIDTH, HEIGHT))  # , HWSURFACE | DOUBLEBUF | RESIZABLE)
 pygame.display.set_caption('Grarantanna')
 
 
@@ -20,8 +19,7 @@ def main():
 
         game.update()
         game.draw()
-        x = game.get_surface()
-        win.blit(x, (0, 0))  # Real drawing
+        win.blit(game.get_surface(), (0, 0))
         pygame.display.flip()
 
 

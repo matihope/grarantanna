@@ -11,7 +11,7 @@ from games.grarantanna import grarantanna_player
 class Grarantanna(game_class.Game):
     def __init__(self, width, height, fps=60):
         super().__init__(width, height, fps)
-        self.bg_color = (50, 50, 50)
+        self.bg_color = basic_globals.BG_COLOR
 
         self.game_tiles = level_reader.read('poziom1', block.Block)
         player_x = 0
@@ -26,8 +26,6 @@ class Grarantanna(game_class.Game):
 
         self.player = grarantanna_player.Player(x=player_x, y=player_y, size=20)
         self.add_updatable(self.player)
-
-        print(self.draw_reg)
 
     def fix_kolce(self, tile):
         sprite = tile.sprites[0]

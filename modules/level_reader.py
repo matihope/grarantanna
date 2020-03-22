@@ -1,5 +1,6 @@
 import pygame
 import os
+from modules import basic_globals
 
 
 def flip(tile, board_w, board_h):
@@ -21,14 +22,13 @@ def decode(lines, tile_sprite_class):
             img = pygame.image.load(os.path.join('resources', f'{vals[0]}'))
             index = int(vals[1])
             texture = pygame.Surface((size, size))
-            texture.fill((50, 50, 50))
+            texture.fill(basic_globals.BG_COLOR)
             texture.blit(img, (-(index * size % img.get_width()), -(index % img.get_width() / size)))
 
             new_tile = tile_sprite_class(texture=texture, x=float(vals[2]), y=float(vals[3]), size=size, tag=vals[7])
             flip(new_tile, board_w, board_h)
 
             tiles.append(new_tile)
-            print(vals)
 
     return tiles
 
