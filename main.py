@@ -7,7 +7,7 @@ pygame.display.set_caption('Grarantanna v0.1')
 
 
 def main():
-    game = grarantanna_game.Grarantanna(width=WIDTH, height=HEIGHT, fps=60)
+    game = grarantanna_game.Grarantanna(width=WIDTH, height=HEIGHT)
 
     clock = pygame.time.Clock()
     while game.run:
