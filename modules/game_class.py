@@ -12,13 +12,16 @@ class Game:
         self.FPS = fps
         self.run = True
 
+        self.delta_time = 1
+
         self.bg_color = basic_globals.BLUE
         self.keys = None
 
         self.__surface = pygame.Surface((width, height))
 
-    def update(self):
+    def update(self, delta_time):
         """ Update self and objects """
+        self.delta_time = delta_time / 15
         self.keys = pygame.key.get_pressed()
         for obj in self.update_reg:
             obj.update(self.keys)
