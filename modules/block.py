@@ -13,13 +13,13 @@ class Block(basic_classes.DrawableObj):
         self.tag = kwargs.get('tag', 'DEFAULT')  # tag types { BLOCK, SPIKE, START, END }
         self.dead = False
 
-    def remove(self):
+    def rem(self, delay=0):
         if not self.dead:
             self.dead = True
-            s = Thread(target=self.__remove)
+            s = Thread(target=self.__remove_delay, args=(delay,))
             s.start()
 
-    def __remove(self):
-        pygame.time.delay(200)
+    def __remove_delay(self, delay):
+        pygame.time.delay(delay)
         self.parent.game_tiles.remove(self)
         self.parent.remove_obj(self)

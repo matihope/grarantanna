@@ -14,7 +14,8 @@ class Grarantanna(game_class.Game):
         self.bg_color = basic_globals.BG_COLOR
 
         self.show_screen = 0
-        self.game_tiles = level_reader.read('poziom2', block.Block)
+        self.game_tiles_start = level_reader.read('poziom2', block.Block)
+        self.game_tiles = self.game_tiles_start.copy()
         player_x = 0
         player_y = 0
         for tile in self.game_tiles:
@@ -25,7 +26,7 @@ class Grarantanna(game_class.Game):
                     self.fix_kolce(tile)
                 self.add_drawable(tile)
 
-        self.player = grarantanna_player.Player(x=player_x, y=player_y, size=20)
+        self.player = grarantanna_player.Player(x=player_x, y=player_y, size=35)
         self.add_updatable(self.player)
         self.add_updatable(self.player.gun)
 
@@ -36,15 +37,26 @@ class Grarantanna(game_class.Game):
         tile.y += 20
         tile.sprites = [surf]
 
+    def reset_level(self):
+        for tile in self.game_tiles:
+            self.remove_obj(tile)
+
+        self.game_tiles = self.game_tiles_start.copy()
+        for tile in self.game_tiles:
+            tile.dead = False
+            if tile.tag == 'start':
+                continue
+            self.add_drawable(tile)
+
 
 class Menu(game_class.Game):
     def __init__(self, game, width, height, fps=60):
         super().__init__(width, height, fps)
         self.game = game
-        self.bg_color = basic_globals.BLUE
+        self.bg_color = basic_globals.BG_COLOR
 
-        self.button_start = grarantanna_button.Button(x=500, y=500, target=self.start,
-                                                      text='Start', color=basic_globals.RED, color2=basic_globals.GREEN)
+        self.button_start = grarantanna_button.Button(x=500, y=500, target=self.start, width=240, height=60,
+                                                      bg_color=self.bg_color)
 
         self.add_updatable(self.button_start)
 

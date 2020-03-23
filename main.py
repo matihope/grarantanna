@@ -12,10 +12,6 @@ def main():
 
     clock = pygame.time.Clock()
     while game.run:
-        # @menu.start
-        # def start():
-        #     game.show_screen = 1
-
         if game.show_screen == 0:  # Menu
             menu.update(clock.tick())
             menu.draw()

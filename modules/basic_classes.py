@@ -29,7 +29,8 @@ class DrawableObj(GameInstance):
 
     def draw(self, surface):
         if self.visible and len(self.sprites) > 0:
-            surface.blit(self.sprites[int(self.sprite_index)], (self.x, self.y))
+            index = min(int(self.sprite_index), len(self.sprites)-1)
+            surface.blit(self.sprites[index], (self.x, self.y))
             self.sprite_index += self.animation_speed
             self.sprite_index %= len(self.sprites)
 

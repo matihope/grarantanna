@@ -12,22 +12,37 @@ class Button(basic_classes.UpdatableObj):
         self.text = kwargs.get('text', '')
         self.width = kwargs.get('width', 150)
         self.height = kwargs.get('height', 50)
-        self.color1 = kwargs.get('color1', (255, 255, 255))
-        self.color2 = kwargs.get('color2', (200, 200, 200))
-        self.color3 = kwargs.get('color3', (150, 150, 150))
-        self.font_color = kwargs.get('font_color', (50, 50, 50))
+        self.align_x = kwargs.get('align_x', 'center')
+        self.align_y = kwargs.get('align_y', 'center')
+        self.draw_x = self.x - self.width // 2  # Default align_x='center'
+        self.draw_y = self.y - self.height // 2  # Default align_y='center'
+        if self.align_x == 'left':
+            self.draw_x = self.x
+        elif self.align_x == 'right':
+            self.draw_x = self.x - self.width
+        if self.align_y == 'top':
+            self.draw_y = self.y
+        elif self.align_y == 'bottom':
+            self.draw_y = self.y - self.height
+
         self.target = kwargs.get('target', None)
+        self.bg_color = kwargs.get('bg_color', (50, 50, 50))
         self.font = pygame.font.SysFont(kwargs.get('font_name', ''), kwargs.get('font_size', 36))
+        self.font_color = kwargs.get('font_color', (50, 50, 50))
         s1 = pygame.Surface((self.width, self.height))
         s2 = s1.copy()
         s3 = s1.copy()
-        s1.fill(self.color1)
-        s2.fill(self.color2)
-        s3.fill(self.color3)
+        s1.fill(self.bg_color)
+        s2.fill(self.bg_color)
+        s3.fill(self.bg_color)
         self.sprites = [s1, s2, s3]
+        for i in range(len(self.sprites)):
+            img = pygame.image.load(os.path.join('resources/button', f'button{i}.png'))
+            self.sprites[i].blit(img, ((self.width-img.get_width())/2, (self.height-img.get_height())/2))
 
         self.pressed_before = False
         self.pressed = False
+        self.long_press = kwargs.get('long_press', False)
 
     def update(self, keys):
         self.sprite_index = 0
@@ -35,17 +50,22 @@ class Button(basic_classes.UpdatableObj):
         mouse_x, mouse_y = self.parent.mouse.get_pos()
         self.pressed_before = self.pressed
         self.pressed = False
-        if gmf.point_in_rectangle(mouse_x, mouse_y, self.x, self.y, self.width, self.height):
+        if gmf.point_in_rectangle(mouse_x, mouse_y, self.draw_x, self.draw_y, self.width, self.height):
             self.sprite_index = 1
             if mouse_press and self.target is not None:
-                if not self.pressed_before:
-                    self.target()
                 self.sprite_index = 2
                 self.pressed = True
+            if self.pressed_before and not self.pressed:
+                self.target()
 
     def draw(self, surface):
-        super().draw(surface)
+        if self.visible and len(self.sprites) > 0:
+            # self.sprite_index += self.animation_speed
+            self.sprite_index %= len(self.sprites)
+            surface.blit(self.sprites[int(self.sprite_index)], (self.draw_x, self.draw_y))
+
         rendered = self.font.render(self.text, True, self.font_color)
-        pos = self.x + self.width//2 - rendered.get_width()//2, self.y + self.height//2 - rendered.get_height()//2
+        pos = self.draw_x + self.width//2 - rendered.get_width()//2, \
+              self.draw_y + self.height//2 - rendered.get_height()//2
         surface.blit(rendered, pos)
 

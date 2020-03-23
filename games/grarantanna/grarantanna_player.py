@@ -12,13 +12,14 @@ class Player(basic_classes.UpdatableObj):
         self.start_x = self.x
         self.start_y = self.y
         self.size = kwargs.get('size', 20)
-        surf = pygame.Surface((20, 20))
-        surf.fill(basic_globals.BG_COLOR)
-        pygame.draw.circle(surf, (200, 200, 200), (10, 10), self.size//2)
-        for sprite in range(1, 13):
+        # surf = pygame.Surface((20, 20))
+        # surf.fill(basic_globals.BG_COLOR)
+        # pygame.draw.circle(surf, (200, 200, 200), (10, 10), self.size//2)
+        for sprite in range(12):
             surf = pygame.Surface((self.size, self.size))
-            surf.blit(pygame.image.load(os.path.join('resources/plyta', f'plyta{sprite}.png')), (0, 0))
-        self.sprites = [surf]
+            surf.fill(basic_globals.BG_COLOR)
+            surf.blit(pygame.image.load(os.path.join('resources/plyta', f'plyta{sprite+1}.png')), (0, 0))
+            self.sprites.append(surf)
         self.spd = 2.2
 
         self.grv = 0.4
@@ -45,6 +46,10 @@ class Player(basic_classes.UpdatableObj):
 
         hsp = self.hsp * self.parent.delta_time
         vsp = self.vsp * self.parent.delta_time
+
+        self.animation_speed = 0.6 * self.parent.delta_time * sign(self.hsp)
+        if self.animation_speed == 0:
+            self.sprite_index = 0
 
         # Collision handling
         for block in self.parent.game_tiles:
@@ -90,6 +95,8 @@ class Player(basic_classes.UpdatableObj):
                     if block.tag == 'magnes_dol' or block.tag == 'magnes_wszystko':
                         self.vsp = 0
                         vsp = 0
+                        if keys[pygame.K_SPACE]:
+                            vsp = 0.1
 
                 # Test for player's feet
                 if place_meeting(self.x, self.y + 1, block, self):
@@ -106,7 +113,7 @@ class Player(basic_classes.UpdatableObj):
                         self.spd *= -1
 
                     if block.tag == 'znikajacy_kwadrat':
-                        block.remove()
+                        block.rem(delay=200)
 
         if self.vsp > 0:
             # Falling
@@ -129,6 +136,7 @@ class Player(basic_classes.UpdatableObj):
         self.gun.y = self.y
         self.on_boost = False
         self.on_ground = False
+        self.parent.reset_level()
 
 
 class Gun(basic_classes.UpdatableObj):
