@@ -46,59 +46,65 @@ class Player(basic_classes.UpdatableObj):
 
         # Collision handling
         for block in self.parent.game_tiles:
+            if block.tag == 'start':
+                continue
 
-            if block.tag == 'trojkat' or block.tag == 'kwadrat' or block.tag[:6] == 'magnes':
+            if self.vsp == 0 and self.hsp == 0:
+                break
+
+            elif block.tag == 'kolce':
+                if place_meeting(self.x + hsp, self.y, block, self) or \
+                        place_meeting(self.x, self.y + vsp, block, self):
+                    self.lose_hp()
+                    # self.parent.run = False
+
+            else:  # For every other blockaa
                 if place_meeting(self.x + hsp, self.y, block, self):
-                    while not place_meeting(self.x + sign(self.hsp)/10, self.y, block, self):
-                        self.x += sign(self.hsp)/10
+                    while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
+                        self.x += sign(self.hsp)
+                    self.hsp = 0
                     hsp = 0
 
                 if place_meeting(self.x, self.y + vsp, block, self):
-                    while not place_meeting(self.x, self.y + sign(self.vsp)/10, block, self):
-                        self.y += sign(self.vsp)/10
+                    while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
+                        self.y += sign(self.vsp)
                     self.vsp = 0
                     vsp = 0
-                
+
                 # Test for the right side of the player
                 if place_meeting(self.x + 1, self.y, block, self):
                     if block.tag == 'magnes_lewo' or block.tag == 'magnes_wszystko':
                         self.hsp = 0
+                        hsp = 0
 
                 # Test for the left side of the player
                 if place_meeting(self.x - 1, self.y, block, self):
                     if block.tag == 'magnes_prawo' or block.tag == 'magnes_wszystko':
                         self.hsp = 0
+                        hsp = 0
 
                 # Test for player's head
                 if place_meeting(self.x, self.y - 1, block, self):
                     if block.tag == 'magnes_dol' or block.tag == 'magnes_wszystko':
                         self.vsp = 0
+                        vsp = 0
 
                 # Test for player's feet
                 if place_meeting(self.x, self.y + 1, block, self):
                     if block.tag == 'magnes_gora' or block.tag == 'magnes_wszystko':
                         self.vsp = 0
+                        vsp = 0
 
-                    if block.tag == 'trojkat':
+                    if block.tag == 'trojkat_gora':
                         self.on_boost = True
                     self.on_ground = True
 
-            elif block.tag == 'kolce':
-                if place_meeting(self.x + hsp, self.y, block, self) or \
-                        place_meeting(self.x, self.y + vsp, block, self):
-                    self.x = self.start_x
-                    self.y = self.start_y
-                    self.vsp = 0
-                    self.hsp = 0
-                    self.gun.x = self.x
-                    self.gun.y = self.y
-                    self.on_boost = False
-                    self.on_ground = False
-                    # self.parent.run = False
+                    if block.tag == 'zamiana':
+                        block.tag = 'kwadrat'
+                        self.spd *= -1
 
-            if self.hsp == 0 and self.vsp == 0:
-                # If player is stopped
-                break
+                    if block.tag == 'znikajacy_kwadrat':
+                        block.remove()
 
         if self.vsp > 0:
             # Falling
@@ -107,6 +113,20 @@ class Player(basic_classes.UpdatableObj):
 
         self.x += hsp
         self.y += vsp
+
+        if not 0 <= self.x <= self.parent.WIDTH or \
+           not 0 <= self.y <= self.parent.HEIGHT:
+            self.lose_hp()
+
+    def lose_hp(self):
+        self.x = self.start_x
+        self.y = self.start_y
+        self.vsp = 0
+        self.hsp = 0
+        self.gun.x = self.x
+        self.gun.y = self.y
+        self.on_boost = False
+        self.on_ground = False
 
 
 class Gun(basic_classes.UpdatableObj):
@@ -137,6 +157,8 @@ class Gun(basic_classes.UpdatableObj):
         for block in self.parent.game_tiles:
             if self.hsp == 0 and self.vsp == 0:
                 break
+            if block.tag == 'start':
+                continue
 
             if place_meeting(self.x + self.hsp, self.y, block, self):
                 while not place_meeting(self.x + self.hsp, self.y, block, self):
