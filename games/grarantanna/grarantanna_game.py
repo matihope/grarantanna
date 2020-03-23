@@ -53,7 +53,7 @@ class Grarantanna(game_class.Game):
                     self.fix_kolce(tile)
                 self.add_drawable(tile)
 
-        self.player = grarantanna_player.Player(x=player_x, y=player_y, size=35)
+        self.player = grarantanna_player.Player(x=player_x, y=player_y, size=20)
         self.add_updatable(self.player)
         self.add_updatable(self.player.gun)
 
@@ -64,8 +64,8 @@ class Menu(game_class.Game):
         self.game = game
         self.bg_color = basic_globals.BG_COLOR
 
-        self.button_start = grarantanna_button.Button(x=500, y=500, target=self.start, width=240, height=60,
-                                                      bg_color=self.bg_color)
+        self.button_start = grarantanna_button.Button(x=self.WIDTH//2, y=500, target=self.start, width=240, height=60,
+                                                      bg_color=self.bg_color, folder_index=0)
 
         self.add_updatable(self.button_start)
 

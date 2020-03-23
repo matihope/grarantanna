@@ -37,7 +37,7 @@ class Button(basic_classes.UpdatableObj):
         s3.fill(self.bg_color)
         self.sprites = [s1, s2, s3]
         for i in range(len(self.sprites)):
-            img = pygame.image.load(os.path.join('resources/button', f'button{i}.png'))
+            img = pygame.image.load(os.path.join(f'resources/button{kwargs.get("folder_index", 0)}', f'button{i}.png'))
             self.sprites[i].blit(img, ((self.width-img.get_width())/2, (self.height-img.get_height())/2))
 
         self.pressed_before = False

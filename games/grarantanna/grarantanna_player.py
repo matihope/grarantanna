@@ -48,8 +48,6 @@ class Player(basic_classes.UpdatableObj):
         vsp = self.vsp * self.parent.delta_time
 
         self.animation_speed = 0.6 * self.parent.delta_time * sign(self.hsp)
-        if self.animation_speed == 0:
-            self.sprite_index = 0
 
         # Collision handling
         for block in self.parent.game_tiles:
