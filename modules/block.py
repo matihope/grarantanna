@@ -39,7 +39,7 @@ class Block(basic_classes.UpdatableObj):
 
             self.x += self.hsp
 
-        self.death_count_down = max(0, self.death_count_down-15*self.parent.delta_time)
+        self.death_count_down = max(0, self.death_count_down-12*self.parent.delta_time)
         if self.dead and self.death_count_down == 0:
             self.parent.remove_obj(self)
             self.parent.game_tiles.remove(self)

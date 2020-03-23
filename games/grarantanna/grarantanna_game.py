@@ -69,15 +69,15 @@ class Menu(game_class.Game):
         self.bg_color = basic_globals.BG_COLOR
 
         self.button_start = grarantanna_button.Button(x=self.WIDTH // 2, y=550, target=self.start, width=240, height=60,
-                                                      bg_color=self.bg_color, folder_index=0)
+                                                      bg_color=self.bg_color, folder_index=0, text='START')
 
         self.button_select_level = grarantanna_button.Button(x=self.WIDTH // 2, y=625, target=self.select_level,
-                                                             width=360, height=60,
+                                                             width=360, height=60, text='SELECT LEVEL',
                                                              bg_color=self.bg_color, folder_index=1)
 
-        self.button_settings = grarantanna_button.Button(x=self.WIDTH // 2, y=700, target=self.settings, width=360,
-                                                         height=60,
-                                                         bg_color=self.bg_color, folder_index=5)
+        self.button_settings = grarantanna_button.Button(x=self.WIDTH // 2, y=700, target=self.settings, width=240,
+                                                         height=60, text='SETTINGS',
+                                                         bg_color=self.bg_color, folder_index=0)
 
         self.add_updatable(self.button_start)
         self.add_updatable(self.button_select_level)
@@ -103,17 +103,17 @@ class LevelSelect(game_class.Game):
                                                              bg_color=self.bg_color, folder_index=3)
 
         self.button_select_level_1 = grarantanna_button.Button(x=self.WIDTH // 5 * 1, y=250, target=self.select_level_1,
-                                                               width=100, height=100,
-                                                               bg_color=self.bg_color, folder_index=4)
+                                                               width=100, height=100, text='Level 1',
+                                                               bg_color=self.bg_color, folder_index=2)
         self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 5 * 2, y=250, target=self.select_level_2,
                                                                width=100, height=100,
-                                                               bg_color=self.bg_color, folder_index=4)
+                                                               bg_color=self.bg_color, folder_index=2)
         self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 5 * 3, y=250, target=self.select_level_3,
                                                                width=100, height=100,
-                                                               bg_color=self.bg_color, folder_index=4)
+                                                               bg_color=self.bg_color, folder_index=2)
         self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 5 * 4, y=250, target=self.select_level_4,
                                                                width=100, height=100,
-                                                               bg_color=self.bg_color, folder_index=4)
+                                                               bg_color=self.bg_color, folder_index=2)
         self.add_updatable(self.button_back_to_menu)
         self.add_updatable(self.button_select_level_1)
         self.add_updatable(self.button_select_level_2)

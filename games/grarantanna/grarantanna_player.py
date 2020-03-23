@@ -154,11 +154,15 @@ class Gun(basic_classes.UpdatableObj):
         super().__init__(*args, **kwargs)
         self.owner = kwargs.get('owner', None)
         self.color = (50, 200, 60)
-        self.size = 4
+        self.size = 6
         self.default_distance = 0.5
 
         self.hsp = 0
         self.vsp = 0
+
+        self.remaining_reload = 0
+        self.mouse_pressed_before = False
+        self.mouse_press = False
 
     def update(self, keys):
         super().update(keys)
@@ -169,10 +173,12 @@ class Gun(basic_classes.UpdatableObj):
         self.hsp += length_dir_x(self.default_distance, d)
         self.vsp += -length_dir_y(self.default_distance, d)
 
-        if self.parent.mouse.get_pressed()[0]:
+        self.mouse_pressed_before = self.mouse_press
+        self.mouse_press = self.parent.mouse.get_pressed()[0] or self.parent.mouse.get_pressed()[2]
+        if self.mouse_press and not self.mouse_pressed_before:
             # Shot
-            self.hsp = -length_dir_x(5, d)
-            self.vsp = length_dir_y(5, d)
+            self.hsp = -length_dir_x(20, d)
+            self.vsp = length_dir_y(20, d)
 
         for block in self.parent.game_tiles:
             if self.hsp == 0 and self.vsp == 0:
