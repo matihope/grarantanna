@@ -44,5 +44,12 @@ class Game:
         self.draw_reg.append(obj)
         obj.add_parent(self)
 
+    def remove_obj(self, obj):
+        """ Remove object from the registries """
+        if obj in self.draw_reg:
+            self.draw_reg.remove(obj)
+        if obj in self.update_reg:
+            self.update_reg.remove(obj)
+
     def get_surface(self):
         return self.__surface

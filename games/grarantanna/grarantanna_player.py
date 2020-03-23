@@ -15,7 +15,9 @@ class Player(basic_classes.UpdatableObj):
         surf = pygame.Surface((20, 20))
         surf.fill(basic_globals.BG_COLOR)
         pygame.draw.circle(surf, (200, 200, 200), (10, 10), self.size//2)
-        # surf.blit(pygame.image.load(os.path.join('resources', 'pilkaB.png')), (0, 0))
+        for sprite in range(1, 13):
+            surf = pygame.Surface((self.size, self.size))
+            surf.blit(pygame.image.load(os.path.join('resources/plyta', f'plyta{sprite}.png')), (0, 0))
         self.sprites = [surf]
         self.spd = 2.2
 

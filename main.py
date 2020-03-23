@@ -8,12 +8,24 @@ pygame.display.set_caption('Grarantanna v0.1')
 
 def main():
     game = grarantanna_game.Grarantanna(width=WIDTH, height=HEIGHT)
+    menu = grarantanna_game.Menu(width=WIDTH, height=HEIGHT, game=game)
 
     clock = pygame.time.Clock()
     while game.run:
-        game.update(clock.tick())
-        game.draw()
-        win.blit(game.get_surface(), (0, 0))
+        # @menu.start
+        # def start():
+        #     game.show_screen = 1
+
+        if game.show_screen == 0:  # Menu
+            menu.update(clock.tick())
+            menu.draw()
+            screen = menu.get_surface()
+        elif game.show_screen == 1:  # Game
+            game.update(clock.tick())
+            game.draw()
+            screen = game.get_surface()
+
+        win.blit(screen, (0, 0))
         pygame.display.flip()
 
         for e in pygame.event.get():

@@ -84,5 +84,5 @@ tile:elementy2.png,1,360.0,520.0,40,40,0,kolce
 tile:elementy2.png,1,320.0,520.0,40,40,0,kolce
 tile:elementy2.png,1,880.0,440.0,40,40,0,kolce
 tile:elementy2.png,1,920.0,440.0,40,40,0,kolce
-tile:elementy3.png,0,1000.0,120.0,40,40,0,start
+tile:elementy3.png,0,1000.0,160.0,40,40,0,start
 
