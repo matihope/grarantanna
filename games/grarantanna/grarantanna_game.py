@@ -12,23 +12,12 @@ class Grarantanna(game_class.Game):
     def __init__(self, width, height, fps=60):
         super().__init__(width, height, fps)
         self.bg_color = basic_globals.BG_COLOR
-
         self.show_screen = 0
-        self.game_tiles_start = level_reader.read('poziom2', block.Block)
-        self.game_tiles = self.game_tiles_start.copy()
-        player_x = 0
-        player_y = 0
-        for tile in self.game_tiles:
-            if tile.tag == 'start':
-                player_x, player_y = tile.x, tile.y
-            else:
-                if tile.tag == 'kolce':
-                    self.fix_kolce(tile)
-                self.add_drawable(tile)
 
-        self.player = grarantanna_player.Player(x=player_x, y=player_y, size=35)
-        self.add_updatable(self.player)
-        self.add_updatable(self.player.gun)
+        self.game_tiles_start = []
+        self.game_tiles = []
+        self.player = None
+        self.load_level('poziom2')
 
     def fix_kolce(self, tile):
         sprite = tile.sprites[0]
@@ -47,6 +36,26 @@ class Grarantanna(game_class.Game):
             if tile.tag == 'start':
                 continue
             self.add_drawable(tile)
+
+    def load_level(self, name):
+        if self.player is not None:
+            self.parent.remove_obj(self.player.gun)
+            self.parent.remove_obj(self.player)
+        self.game_tiles_start = level_reader.read(name, block.Block)
+        self.game_tiles = self.game_tiles_start.copy()
+        player_x = 0
+        player_y = 0
+        for tile in self.game_tiles:
+            if tile.tag == 'start':
+                player_x, player_y = tile.x, tile.y
+            else:
+                if tile.tag == 'kolce':
+                    self.fix_kolce(tile)
+                self.add_drawable(tile)
+
+        self.player = grarantanna_player.Player(x=player_x, y=player_y, size=35)
+        self.add_updatable(self.player)
+        self.add_updatable(self.player.gun)
 
 
 class Menu(game_class.Game):
