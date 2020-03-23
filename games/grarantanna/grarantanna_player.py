@@ -2,7 +2,6 @@ import pygame
 from modules import basic_classes
 from modules import basic_globals
 from modules.gamemaker_functions import *
-
 import os
 
 
@@ -12,12 +11,12 @@ class Player(basic_classes.UpdatableObj):
 
         self.start_x = self.x
         self.start_y = self.y
+        self.size = kwargs.get('size', 20)
         surf = pygame.Surface((20, 20))
         surf.fill(basic_globals.BG_COLOR)
-        pygame.draw.circle(surf, (200, 200, 200), (10, 10), 10)
+        pygame.draw.circle(surf, (200, 200, 200), (10, 10), self.size//2)
         # surf.blit(pygame.image.load(os.path.join('resources', 'pilkaB.png')), (0, 0))
         self.sprites = [surf]
-        self.size = kwargs.get('size', 20)
         self.spd = 2.2
 
         self.grv = 0.4
@@ -27,6 +26,8 @@ class Player(basic_classes.UpdatableObj):
         self.on_boost = False
         self.jump = -7
         self.power_jump = -11.3
+
+        self.gun = Gun(owner=self, x=self.x, y=self.y)
         
     def update(self, keys):
         super().update(keys)
@@ -48,14 +49,13 @@ class Player(basic_classes.UpdatableObj):
 
             if block.tag == 'trojkat' or block.tag == 'kwadrat' or block.tag[:6] == 'magnes':
                 if place_meeting(self.x + hsp, self.y, block, self):
-                    while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
-                        self.x += sign(self.hsp)
-                    self.hsp = 0
+                    while not place_meeting(self.x + sign(self.hsp)/10, self.y, block, self):
+                        self.x += sign(self.hsp)/10
                     hsp = 0
 
                 if place_meeting(self.x, self.y + vsp, block, self):
-                    while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
-                        self.y += sign(self.vsp)
+                    while not place_meeting(self.x, self.y + sign(self.vsp)/10, block, self):
+                        self.y += sign(self.vsp)/10
                     self.vsp = 0
                     vsp = 0
                 
@@ -90,8 +90,8 @@ class Player(basic_classes.UpdatableObj):
                     self.y = self.start_y
                     self.vsp = 0
                     self.hsp = 0
-                    hsp = 0
-                    vsp = 0
+                    self.gun.x = self.x
+                    self.gun.y = self.y
                     self.on_boost = False
                     self.on_ground = False
                     # self.parent.run = False
@@ -107,3 +107,52 @@ class Player(basic_classes.UpdatableObj):
 
         self.x += hsp
         self.y += vsp
+
+
+class Gun(basic_classes.UpdatableObj):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.owner = kwargs.get('owner', None)
+        self.color = (50, 200, 60)
+        self.size = 4
+        self.default_distance = 0.5
+
+        self.hsp = 0
+        self.vsp = 0
+
+    def update(self, keys):
+        super().update(keys)
+        m_x, m_y = self.parent.mouse.get_pos()
+        d = point_direction(self.x, self.y, m_x, m_y)
+        self.hsp = ((self.owner.x+self.owner.size/2) - self.x) / 10 * self.parent.delta_time
+        self.vsp = ((self.owner.y+self.owner.size/2) - self.y) / 10 * self.parent.delta_time
+        self.hsp += length_dir_x(self.default_distance, d)
+        self.vsp += -length_dir_y(self.default_distance, d)
+
+        if self.parent.mouse.get_pressed()[0]:
+            # Shot
+            self.hsp = -length_dir_x(5, d)
+            self.vsp = length_dir_y(5, d)
+
+        for block in self.parent.game_tiles:
+            if self.hsp == 0 and self.vsp == 0:
+                break
+
+            if place_meeting(self.x + self.hsp, self.y, block, self):
+                while not place_meeting(self.x + self.hsp, self.y, block, self):
+                    self.hsp -= sign(self.hsp)
+                self.hsp = 0
+
+            if place_meeting(self.x, self.y + self.vsp, block, self):
+                while not place_meeting(self.x, self.y + self.vsp, block, self):
+                    self.vsp -= sign(self.vsp)
+                self.vsp = 0
+
+        self.x += self.hsp
+        self.y += self.vsp
+
+    def draw(self, surface):
+        pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.size)
+
+
+

@@ -26,6 +26,7 @@ class Grarantanna(game_class.Game):
 
         self.player = grarantanna_player.Player(x=player_x, y=player_y, size=20)
         self.add_updatable(self.player)
+        self.add_updatable(self.player.gun)
 
     def fix_kolce(self, tile):
         sprite = tile.sprites[0]

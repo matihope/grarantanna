@@ -16,6 +16,7 @@ class Game:
 
         self.bg_color = basic_globals.BLUE
         self.keys = None
+        self.mouse = None
 
         self.__surface = pygame.Surface((width, height))
 
@@ -23,6 +24,7 @@ class Game:
         """ Update self and objects """
         self.delta_time = delta_time / 15
         self.keys = pygame.key.get_pressed()
+        self.mouse = pygame.mouse
         for obj in self.update_reg:
             obj.update(self.keys)
 
