@@ -1,6 +1,6 @@
 import pygame
 import os
-from modules import basic_globals
+from modules import basic_globals, block
 
 
 def flip(tile, board_w, board_h):
@@ -8,7 +8,7 @@ def flip(tile, board_w, board_h):
     tile.y = y
 
 
-def decode(lines, tile_sprite_class):
+def decode(lines):
     tiles = []
     board_w, board_h = lines[2][12:].split(',')
     board_w = int(board_w)
@@ -29,9 +29,10 @@ def decode(lines, tile_sprite_class):
                 sprite.fill(basic_globals.BG_COLOR)
                 sprite.blit(img, (-(index * size % img_w), -(index % img_h / size)))
                 sprites.append(sprite)
+            tag = vals[7]
 
-            new_tile = tile_sprite_class(sprites=sprites, sprite_index=int(index),
-                                         x=float(vals[2]), y=float(vals[3]), size=size, tag=vals[7])
+            new_tile = block.Block(sprites=sprites, sprite_index=int(index), x=float(vals[2]), y=float(vals[3]),
+                           size=size, tag=tag)
             flip(new_tile, board_w, board_h)
 
             tiles.append(new_tile)
@@ -46,6 +47,6 @@ def read_file(file_name):
     return lines
 
 
-def read(file_name, tile_sprite_class):
+def read(file_name):
     lines = read_file(file_name)
-    return decode(lines, tile_sprite_class)
+    return decode(lines)

@@ -8,13 +8,11 @@ import os
 class Player(basic_classes.UpdatableObj):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.tag = 'player'
 
         self.start_x = self.x
         self.start_y = self.y
         self.size = kwargs.get('size', 20)
-        # surf = pygame.Surface((20, 20))
-        # surf.fill(basic_globals.BG_COLOR)
-        # pygame.draw.circle(surf, (200, 200, 200), (10, 10), self.size//2)
         for sprite in range(12):
             surf = pygame.Surface((self.size, self.size))
             surf.fill(basic_globals.BG_COLOR)
@@ -29,11 +27,20 @@ class Player(basic_classes.UpdatableObj):
         self.on_boost = False
         self.jump = -7
         self.power_jump = -11.3
+        self.drawing_death_animation = False
 
         self.gun = Gun(owner=self, x=self.x, y=self.y)
         
     def update(self, keys):
         super().update(keys)
+
+        if self.drawing_death_animation:
+            self.vsp += self.grv * self.parent.delta_time
+            self.y += self.vsp * self.parent.delta_time
+            self.animation_speed = 1
+            if self.y > self.parent.HEIGHT:
+                self.lose_hp_vars()
+            return
 
         self.hsp = (int(keys[pygame.K_d]) - int(keys[pygame.K_a])) * self.spd
 
@@ -93,8 +100,8 @@ class Player(basic_classes.UpdatableObj):
                     if block.tag == 'magnes_dol' or block.tag == 'magnes_wszystko':
                         self.vsp = 0
                         vsp = 0
-                        if keys[pygame.K_SPACE]:
-                            vsp = 0.1
+                        # if keys[pygame.K_SPACE]:
+                        #     vsp = 0.1
 
                 # Test for player's feet
                 if place_meeting(self.x, self.y + 1, block, self):
@@ -126,6 +133,10 @@ class Player(basic_classes.UpdatableObj):
             self.lose_hp()
 
     def lose_hp(self):
+        self.vsp = -7
+        self.drawing_death_animation = True
+
+    def lose_hp_vars(self):
         self.x = self.start_x
         self.y = self.start_y
         self.vsp = 0
@@ -135,6 +146,7 @@ class Player(basic_classes.UpdatableObj):
         self.on_boost = False
         self.on_ground = False
         self.parent.reset_level()
+        self.drawing_death_animation = False
 
 
 class Gun(basic_classes.UpdatableObj):
