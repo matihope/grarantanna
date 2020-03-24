@@ -11,6 +11,8 @@ def main():
     menu = grarantanna_game.Menu(width=WIDTH, height=HEIGHT, game=game)
     level_select = grarantanna_game.LevelSelect(width=WIDTH, height=HEIGHT, game=game)
     settings = grarantanna_game.Settings(width=WIDTH, height=HEIGHT, game=game)
+    stop = grarantanna_game.Stop(width=WIDTH, height=HEIGHT, game=game)
+    settings_in_game = grarantanna_game.Settings_in_game(width=WIDTH, height=HEIGHT, game=game)
 
     clock = pygame.time.Clock()
     while game.run:
@@ -30,18 +32,31 @@ def main():
             settings.update(clock.tick())
             settings.draw()
             screen = settings.get_surface()
+        elif game.show_screen == 4:  # Stop
+            stop.update(clock.tick())
+            stop.draw()
+            screen = stop.get_surface()
+        elif game.show_screen == 5:  # Setings in game
+            settings_in_game.update(clock.tick())
+            settings_in_game.draw()
+            screen = settings_in_game.get_surface()
 
         win.blit(screen, (0, 0))
         pygame.display.flip()
-
-        print(clock.get_fps())
 
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 game.run = False
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
-                    game.run = False
+                    if game.show_screen == 4:
+                        game.show_screen = 1
+                    elif game.show_screen == 1:
+                        game.show_screen = 4
+                    elif game.show_screen == 3:
+                        game.show_screen = 0
+                    elif game.show_screen == 2:
+                        game.show_screen = 0
 
 
 if __name__ == '__main__':

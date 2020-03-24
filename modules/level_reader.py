@@ -25,14 +25,14 @@ def decode(lines):
             img_h = img.get_height()
             sprites = []
             for sprite in range(img_w//size * img_h//size):
-                sprite = pygame.Surface((size, size))
-                sprite.fill(basic_globals.BG_COLOR)
-                sprite.blit(img, (-(index * size % img_w), -(index % img_h / size)))
-                sprites.append(sprite)
+                surf = pygame.Surface((size, size))
+                surf.fill(basic_globals.BG_COLOR)
+                surf.blit(img, (-(sprite * size % img_w), -(sprite % img_h / size)))
+                sprites.append(surf)
             tag = vals[7]
 
             new_tile = block.Block(sprites=sprites, sprite_index=int(index), x=float(vals[2]), y=float(vals[3]),
-                           size=size, tag=tag)
+                                   size=size, tag=tag)
             flip(new_tile, board_w, board_h)
 
             tiles.append(new_tile)

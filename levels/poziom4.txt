@@ -198,7 +198,7 @@ tile:elementy1.png,5,960.0,40.0,40,40,0,kwadrat
 tile:elementy1.png,5,1000.0,40.0,40,40,0,kwadrat
 tile:elementy1.png,5,1040.0,40.0,40,40,0,kwadrat
 tile:elementy1.png,5,1080.0,40.0,40,40,0,kwadrat
-tile:elementy1.png,15,1080.0,120.0,40,40,0,start
+tile:elementy1.png,15,1040.0,160.0,40,40,0,start
 tile:elementy1.png,18,880.0,120.0,40,40,0,trojkat_gora
 tile:elementy1.png,13,920.0,80.0,40,40,0,tp
 tile:elementy1.png,5,880.0,80.0,40,40,0,kwadrat
