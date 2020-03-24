@@ -34,6 +34,8 @@ def main():
         win.blit(screen, (0, 0))
         pygame.display.flip()
 
+        print(clock.get_fps())
+
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 game.run = False

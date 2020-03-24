@@ -10,9 +10,9 @@ class Player(basic_classes.UpdatableObj):
         super().__init__(*args, **kwargs)
         self.tag = 'player'
 
+        # Starting vars
         self.start_x = self.x
         self.start_y = self.y
-        self.size = kwargs.get('size', 20)
         for sprite in range(12):
             surf = pygame.Surface((self.size, self.size))
             surf.fill(basic_globals.BG_COLOR)
@@ -29,25 +29,37 @@ class Player(basic_classes.UpdatableObj):
         self.power_jump = -11.3
         self.drawing_death_animation = False
 
+        self.is_flying = False
+        self.flying_speed = -3
+
         self.gun = Gun(owner=self, x=self.x, y=self.y)
         
     def update(self, keys):
         super().update(keys)
 
+        # If player died
         if self.drawing_death_animation:
             self.vsp += self.grv * self.parent.delta_time
             self.y += self.vsp * self.parent.delta_time
             self.animation_speed = 1
             if self.y > self.parent.HEIGHT:
-                self.lose_hp_vars()
+                self.reset_vars()
             return
 
+        # Basic movement
         self.hsp = (int(keys[pygame.K_d]) - int(keys[pygame.K_a])) * self.spd
-
         self.vsp += self.grv * self.parent.delta_time
-        
+
+        # If player is flying
+        if self.is_flying:
+            self.hsp = self.flying_speed
+            self.vsp = 0
+
+        # Jumping
         if keys[pygame.K_SPACE] and self.on_ground:
-            self.vsp = self.jump if not self.on_boost else self.power_jump
+            if not self.is_flying:
+                self.vsp = self.jump if not self.on_boost else self.power_jump
+            self.is_flying = False
             self.on_ground = False
             self.on_boost = False
 
@@ -58,23 +70,18 @@ class Player(basic_classes.UpdatableObj):
 
         # Collision handling
         for block in self.parent.game_tiles:
-            if block.tag == 'start':
+            if block.tag == 'start' or block.tag == 'czesc':
                 continue
 
             if self.vsp == 0 and self.hsp == 0:
                 break
 
-            elif block.tag == 'kolce':
-                if place_meeting(self.x + hsp, self.y, block, self) or \
-                        place_meeting(self.x, self.y + vsp, block, self):
-                    self.lose_hp()
-                    # self.parent.run = False
-
-            else:  # For every other blockaa
+            else:  # For every other block
                 if place_meeting(self.x + hsp, self.y, block, self):
                     while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
                         self.x += sign(self.hsp)
                     self.hsp = 0
+                    self.is_flying = False
                     hsp = 0
 
                 if place_meeting(self.x, self.y + vsp, block, self):
@@ -105,20 +112,35 @@ class Player(basic_classes.UpdatableObj):
 
                 # Test for player's feet
                 if place_meeting(self.x, self.y + 1, block, self):
+                    self.on_ground = True
                     if block.tag == 'magnes_gora' or block.tag == 'magnes_wszystko':
                         self.vsp = 0
                         vsp = 0
 
-                    if block.tag == 'trojkat_gora':
-                        self.on_boost = True
-                    self.on_ground = True
+                    if block.tag == 'kolce':
+                        self.lose_hp()
 
-                    if block.tag == 'zamiana':
+                    elif block.tag == 'trojkat_gora':
+                        self.on_boost = True
+
+                    elif block.tag == 'zamiana':
                         block.tag = 'kwadrat'
                         self.spd *= -1
 
                     if block.tag == 'znikajacy_kwadrat':
                         block.rem(delay=200)
+
+                    if block.tag == 'leci_lewo':
+                        self.is_flying = True
+                        self.flying_speed = -abs(self.flying_speed)
+                        self.x = block.x-self.size
+                        self.y = block.y + block.size // 2 - self.size // 2
+
+                    if block.tag == 'leci_prawo':
+                        self.is_flying = True
+                        self.flying_speed = abs(self.flying_speed)
+                        self.x = block.x + block.size
+                        self.y = block.y + block.size // 2 - self.size // 2
 
         if self.vsp > 0:
             # Falling
@@ -128,21 +150,24 @@ class Player(basic_classes.UpdatableObj):
         self.x += hsp
         self.y += vsp
 
+        # If on the edge of the screen
         if not 0 <= self.x <= self.parent.WIDTH or \
            not 0 <= self.y <= self.parent.HEIGHT:
             self.lose_hp()
 
     def lose_hp(self):
+        # What happens when dies
         self.vsp = -7
         self.drawing_death_animation = True
 
-    def lose_hp_vars(self):
+    def reset_vars(self):
         self.x = self.start_x
         self.y = self.start_y
         self.vsp = 0
         self.hsp = 0
         self.gun.x = self.x
         self.gun.y = self.y
+        self.spd = abs(self.spd)
         self.on_boost = False
         self.on_ground = False
         self.parent.reset_level()
@@ -164,6 +189,8 @@ class Gun(basic_classes.UpdatableObj):
         self.mouse_pressed_before = False
         self.mouse_press = False
 
+        self.bullet = None
+
     def update(self, keys):
         super().update(keys)
         m_x, m_y = self.parent.mouse.get_pos()
@@ -173,17 +200,31 @@ class Gun(basic_classes.UpdatableObj):
         self.hsp += length_dir_x(self.default_distance, d)
         self.vsp += -length_dir_y(self.default_distance, d)
 
+        if self.bullet is not None:
+            if self.bullet.outside_the_game:
+                self.bullet = None
+                self.parent.remove_obj(self.bullet)
+            elif self.bullet.touched:
+                self.bullet = None
+                self.parent.remove_obj(self.bullet)
+
+        # Shooting
         self.mouse_pressed_before = self.mouse_press
         self.mouse_press = self.parent.mouse.get_pressed()[0] or self.parent.mouse.get_pressed()[2]
-        if self.mouse_press and not self.mouse_pressed_before:
-            # Shot
+        if self.mouse_press and not self.mouse_pressed_before and self.bullet is None and \
+                not self.owner.drawing_death_animation:
             self.hsp = -length_dir_x(20, d)
             self.vsp = length_dir_y(20, d)
+            x = self.x + self.size // 2
+            y = self.y + self.size // 2
+            d = point_direction(x, y, m_x, m_y)
+            self.bullet = Bullet(direction=d, speed=5, x=x, y=y)
+            self.parent.add_updatable(self.bullet)
 
         for block in self.parent.game_tiles:
             if self.hsp == 0 and self.vsp == 0:
                 break
-            if block.tag == 'start':
+            if block.tag == 'start'or block.tag == 'czesc':
                 continue
 
             if place_meeting(self.x + self.hsp, self.y, block, self):
@@ -196,11 +237,61 @@ class Gun(basic_classes.UpdatableObj):
                     self.vsp -= sign(self.vsp)
                 self.vsp = 0
 
-        self.x += self.hsp
-        self.y += self.vsp
+        if not self.owner.drawing_death_animation:
+            self.x += self.hsp
+            self.y += self.vsp
 
     def draw(self, surface):
         pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.size)
 
 
+class Bullet(basic_classes.UpdatableObj):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.speed = kwargs.get('speed', 1)
+        self.direction = kwargs.get('direction', 1)
 
+        self.size = kwargs.get('size', 10)
+
+        surf = pygame.Surface((self.size, self.size))
+        surf.fill((255, 0, 0))
+
+        self.sprites = [surf]
+
+        self.hsp = length_dir_x(self.speed, self.direction)
+        self.vsp = -length_dir_y(self.speed, self.direction)
+
+        self.touched = False
+        self.touched_block_id = None
+        self.touched_side = ''  # left, right, top, bottom
+        self.outside_the_game = False
+
+    def update(self, keys):
+
+        if not self.touched:
+            self.hsp -= length_dir_x(0.1, 90) * self.parent.delta_time
+            self.vsp -= -length_dir_y(0.1, 90) * self.parent.delta_time
+
+        for block in self.parent.game_tiles:
+            if block.tag == 'start':
+                continue
+
+            if place_meeting(self.x + self.hsp, self.y, block, self):
+                self.touched_block_id = block
+                self.touched = True
+                self.hsp = 0
+                self.vsp = 0
+                break
+
+            if place_meeting(self.x, self.y + self.vsp, block, self):
+                self.touched_block_id = block
+                self.touched = True
+                self.vsp = 0
+                self.hsp = 0
+                break
+
+        self.x += self.hsp
+        self.y += self.vsp
+
+        if 0 <= self.x <= self.parent.WIDTH or 0 <= self.y <= self.parent.HEIGHT:
+            self.outside_the_game = True

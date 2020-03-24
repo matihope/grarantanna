@@ -9,9 +9,11 @@ import pygame
 class Block(basic_classes.UpdatableObj):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.spd = 1
+        self.spd = 1.5
         self.dead = False
         self.size = kwargs.get('size', 40)
+        self.width = self.size
+        self.height = self.size
         self.tag = kwargs.get('tag', 'DEFAULT')  # tag types { BLOCK, SPIKE, START, END }
         self.death_count_down = 0
 
@@ -37,9 +39,28 @@ class Block(basic_classes.UpdatableObj):
                         self.hsp = 0
                         self.spd = -self.spd
 
+                if tile.tag[:9] == 'odbijanie' or tile.tag == 'player':
+                    if gmf.place_meeting(self.x + self.hsp, self.y, tile, self):
+                        while not gmf.place_meeting(self.x + gmf.sign(self.hsp), self.y, tile, self):
+                            self.x += gmf.sign(self.hsp)
+                        self.hsp = 0
+                        self.spd = -self.spd
+
             self.x += self.hsp
 
         self.death_count_down = max(0, self.death_count_down-12*self.parent.delta_time)
         if self.dead and self.death_count_down == 0:
             self.parent.remove_obj(self)
             self.parent.game_tiles.remove(self)
+
+    def draw(self, surface):
+        super().draw(surface)
+
+        # # Top
+        # pygame.draw.rect(surface, (255, 0, 0), (self.x, self.y, self.width, 3))
+        # # Bottom
+        # pygame.draw.rect(surface, (255, 0, 0), (self.x, self.y + self.height - 3, self.width, 3))
+        # # Right
+        # pygame.draw.rect(surface, (255, 0, 0), (self.x+self.width-3, self.y, 3, self.height))
+        # # Left
+        # pygame.draw.rect(surface, (255, 0, 0), (self.x, self.y, 3, self.height))

@@ -4,7 +4,7 @@ from modules import basic_globals, block
 
 
 def flip(tile, board_w, board_h):
-    y = (board_h * tile.size) - tile.y
+    y = (board_h * tile.height) - tile.y
     tile.y = y
 
 

@@ -26,6 +26,9 @@ class DrawableObj(GameInstance):
         self.sprites = kwargs.get('sprites', [])
         self.sprite_index = kwargs.get('sprite_index', 0)
         self.animation_speed = kwargs.get('animation_speed', 0)
+        self.size = kwargs.get('size', 10)
+        self.width = kwargs.get('width', self.size)
+        self.height = kwargs.get('height', self.size)
 
     def draw(self, surface):
         if self.visible and len(self.sprites) > 0:

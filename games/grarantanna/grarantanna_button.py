@@ -30,6 +30,7 @@ class Button(basic_classes.UpdatableObj):
         self.font_name = kwargs.get('font_name', '')
         self.font_size = kwargs.get('font_size', 36)
         self.font_color = kwargs.get('font_color', (227, 197, 56))
+        self.font_grow_ratio = kwargs.get('font_grow_ratio', 1.2)
         s1 = pygame.Surface((self.width, self.height))
         s2 = s1.copy()
         s3 = s1.copy()
@@ -65,7 +66,7 @@ class Button(basic_classes.UpdatableObj):
             self.sprite_index %= len(self.sprites)
             surface.blit(self.sprites[int(self.sprite_index)], (self.draw_x, self.draw_y))
 
-        font = pygame.font.SysFont(self.font_name, self.font_size)
+        font = pygame.font.SysFont(self.font_name, self.font_size if self.sprite_index == 0 else int(self.font_size*self.font_grow_ratio))
         rendered = font.render(self.text, True, self.font_color)
         pos = self.draw_x + self.width//2 - rendered.get_width()//2, \
               self.draw_y + self.height//2 - rendered.get_height()//2

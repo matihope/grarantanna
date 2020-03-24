@@ -33,13 +33,13 @@ def place_meeting(x, y, b, p):  # For predicting the position
     :return: collision
     """
 
-    if x + p.size < b.x:
+    if x + p.width < b.x:
         return False
-    if x > b.x + b.size:
+    if x > b.x + b.width:
         return False
-    if y + p.size < b.y:
+    if y + p.height < b.y:
         return False
-    if y > b.y + b.size:
+    if y > b.y + b.height:
         return False
     return True
 
