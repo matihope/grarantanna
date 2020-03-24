@@ -14,7 +14,7 @@ class Bullet(basic_classes.UpdatableObj):
         self.size = kwargs.get('size', 6)
 
         surf = pygame.Surface((self.size, self.size))
-        surf.fill((255, 0, 0))
+        surf.fill((0, 178, 255) if self.portal_color == 'blue' else (249, 240, 7))
 
         self.sprites = [surf]
 
@@ -57,3 +57,6 @@ class Bullet(basic_classes.UpdatableObj):
 
         if not 0 <= self.x <= self.parent.WIDTH or not 0 <= self.y <= self.parent.HEIGHT:
             self.outside_the_game = True
+
+    def draw(self, surface):
+        surface.blit(self.sprites[self.sprite_index], (self.x, self.y))

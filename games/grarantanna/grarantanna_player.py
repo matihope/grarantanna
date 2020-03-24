@@ -34,6 +34,10 @@ class Player(basic_classes.UpdatableObj):
         self.flying_speed = 3
         self.is_kicked_sideways = False
         self.kick_sideways_speed = 3
+        self.kick_upwards = False
+        self.kick_upwards_speed = -5
+        self.teleported_x = 0
+        self.teleported_y = 0
 
         self.gun = grarantanna_gun.Gun(owner=self, x=self.x, y=self.y)
         
@@ -77,6 +81,8 @@ class Player(basic_classes.UpdatableObj):
 
         self.animation_speed = 0.6 * self.parent.delta_time * sign(self.hsp)
 
+        self.teleporting = False
+
         # Collision handling
         for block in self.parent.game_tiles:
             if block.tag == 'start' or block.tag == 'czesc':
@@ -89,14 +95,22 @@ class Player(basic_classes.UpdatableObj):
                 if place_meeting(self.x + hsp, self.y, block, self):
                     while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
                         self.x += sign(self.hsp)
-                    self.hsp = 0
                     self.is_flying = False
                     hsp = 0
 
                 if place_meeting(self.x, self.y + vsp, block, self):
                     while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
                         self.y += sign(self.vsp)
-                    self.vsp = 0
+                    if block.tag == 'tp':
+                        opposite_block = block.get_opposite()
+                        if len(opposite_block) > 0:
+                            print('has opposite')
+                            print(opposite_block)
+                            if not (block.has_portal_on_side('top') and sign(self.vsp) == 1) and \
+                               not (block.has_portal_on_side('bottom') and sign(self.vsp) == -1):
+                                self.vsp = 0
+                    else:
+                        self.vsp = 0
                     self.is_kicked_sideways = False
                     vsp = 0
 
@@ -117,9 +131,6 @@ class Player(basic_classes.UpdatableObj):
                         if block.has_portal_on_side('left'):
                             print('Touching portal left')
 
-                            opposite_block = [blk for blk in self.parent.game_tiles if blk.tag == 'tp' and blk != block]
-                            print(opposite_block)
-
                 # Test for the left side of the player
                 if place_meeting(self.x - 1, self.y, block, self):
                     if block.tag == 'magnes_prawo' or block.tag == 'magnes_wszystko':
@@ -129,9 +140,7 @@ class Player(basic_classes.UpdatableObj):
                     if block.tag == 'tp':
                         if block.has_portal_on_side('right'):
                             print('Touching portal right')
-
-                            opposite_block = [blk for blk in self.parent.game_tiles if blk.tag == 'tp' and blk != block]
-                            print(opposite_block)
+                            self.teleporting = True
 
                     if block.tag == 'zabija_prawo':
                         self.lose_hp()
@@ -152,9 +161,6 @@ class Player(basic_classes.UpdatableObj):
                             if block.has_portal_on_side('bottom'):
                                 print('Touching portal bottom')
 
-                            opposite_block = [blk for blk in self.parent.game_tiles if blk.tag == 'tp' and blk != block]
-                            print(opposite_block)
-
                 # Test for player's feet
                 if place_meeting(self.x, self.y + 1, block, self):
                     self.on_ground = True
@@ -171,6 +177,7 @@ class Player(basic_classes.UpdatableObj):
                     elif block.tag == 'zamiana':
                         block.tag = 'kwadrat'
                         self.spd *= -1
+                        block.rem(delay=400)
 
                     if block.tag == 'znikajacy_kwadrat':
                         block.rem(delay=200)
@@ -191,9 +198,6 @@ class Player(basic_classes.UpdatableObj):
                         if block.has_portal_on_side('top'):
                             print('Touching portal top')
 
-                            opposite_block = [blk for blk in self.parent.game_tiles if blk.tag == 'tp' and blk != block]
-                            print(opposite_block)
-
         if self.vsp > 0:
             # Falling
             self.on_ground = False
@@ -201,6 +205,9 @@ class Player(basic_classes.UpdatableObj):
 
         self.x += hsp
         self.y += vsp
+        if self.teleporting:
+            self.teleported_x += hsp
+            self.teleported_y += vsp
 
         # If on the edge of the screen
         if not 0 <= self.x <= self.parent.WIDTH or \
@@ -224,3 +231,12 @@ class Player(basic_classes.UpdatableObj):
         self.on_ground = False
         self.parent.reset_level()
         self.drawing_death_animation = False
+
+    def draw(self, surface):
+        if self.visible and len(self.sprites) > 0:
+            index = min(int(self.sprite_index), len(self.sprites) - 1)
+            surface.blit(self.sprites[index], (self.x, self.y))
+            if self.teleporting:
+                surface.blit(self.sprites[index], (self.teleported_x, self.teleported_y))
+            self.sprite_index += self.animation_speed
+            self.sprite_index %= len(self.sprites)

@@ -71,11 +71,16 @@ class Block(basic_classes.UpdatableObj):
             self.parent.remove_obj(self)
             self.parent.game_tiles.remove(self)
 
+    def get_opposite(self):
+        opposite_block = [blk for blk in self.parent.game_tiles if blk.tag == 'tp' and blk != self]
+        return opposite_block
+
     def make_portal(self, side, color):
         if self.tag == 'tp':
-            if len(self.colored_sides) == 2:
-                # remove one portal and add a new one
-                self.colored_sides.pop(0)
+            for s in self.colored_sides:
+                if s[0] == side:
+                    self.colored_sides.remove(s)
+
             self.colored_sides.append((side, color))
 
     def remove_portal(self, color):

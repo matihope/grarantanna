@@ -36,7 +36,10 @@ class Grarantanna(game_class.Game):
             if tile.tag != 'start':
                 if tile.tag == 'kolce':
                     self.fix_kolce(tile)
-                self.add_updatable(tile)
+                if tile.tag == 'czesc':
+                    self.add_updatable(tile)
+                else:
+                    self.add_updatable(tile, draw_order=4)
 
     def load_level(self, name):
         if self.player is not None:
@@ -55,7 +58,10 @@ class Grarantanna(game_class.Game):
             else:
                 if tile.tag == 'kolce':
                     self.fix_kolce(tile)
-                self.add_updatable(tile)
+                if tile.tag == 'czesc':
+                    self.add_updatable(tile)
+                else:
+                    self.add_updatable(tile, draw_order=4)
         self.player = grarantanna_player.Player(x=player_x, y=player_y, size=20)
         self.add_updatable(self.player, update_order=1, draw_order=1)
         self.add_updatable(self.player.gun, draw_order=3)

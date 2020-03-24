@@ -53,6 +53,10 @@ class Gun(basic_classes.UpdatableObj):
             self.parent.add_updatable(self.bullet, draw_order=2)
         self.mouse_pressed_before = mouse_press[0] or mouse_press[2]
 
+        if self.owner.drawing_death_animation:
+            self.hsp = 0
+            self.vsp = 0
+
         for block in self.parent.game_tiles:
             if self.hsp == 0 and self.vsp == 0:
                 break
@@ -60,19 +64,20 @@ class Gun(basic_classes.UpdatableObj):
                 continue
 
             if place_meeting(self.x + self.hsp, self.y, block, self):
-                while place_meeting(self.x + self.hsp, self.y, block, self):
-                    self.hsp -= sign(self.hsp)/10
+                while not place_meeting(self.x + sign(self.hsp)/10, self.y, block, self):
+                    self.x += sign(self.hsp)/10
+                self.hsp = 0
 
             if place_meeting(self.x, self.y + self.vsp, block, self):
-                while place_meeting(self.x, self.y + self.vsp, block, self):
-                    self.vsp -= sign(self.vsp)/10
+                while not place_meeting(self.x, self.y + sign(self.vsp)/10, block, self):
+                    self.y += sign(self.vsp)/10
+                self.vsp = 0
 
-        if not self.owner.drawing_death_animation:
-            self.x += self.hsp
-            self.y += self.vsp
+        self.x += self.hsp
+        self.y += self.vsp
 
     def draw(self, surface):
-        pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.size)
+        pygame.draw.circle(surface, self.color, (int(self.x+self.size//2), int(self.y+self.size//2)), self.size)
 
     def remove_portal_from_blocks(self, color):
         [block.remove_portal(color) for block in self.parent.game_tiles if block.tag == 'tp']
