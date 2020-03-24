@@ -34,10 +34,8 @@ class Player(basic_classes.UpdatableObj):
         self.flying_speed = 3
         self.is_kicked_sideways = False
         self.kick_sideways_speed = 3
-        self.kick_upwards = False
-        self.kick_upwards_speed = -5
-        self.teleported_x = 0
-        self.teleported_y = 0
+        self.teleporting = False
+        self.teleported_player = None
 
         self.gun = grarantanna_gun.Gun(owner=self, x=self.x, y=self.y)
         
@@ -81,8 +79,6 @@ class Player(basic_classes.UpdatableObj):
 
         self.animation_speed = 0.6 * self.parent.delta_time * sign(self.hsp)
 
-        self.teleporting = False
-
         # Collision handling
         for block in self.parent.game_tiles:
             if block.tag == 'start' or block.tag == 'czesc':
@@ -96,23 +92,16 @@ class Player(basic_classes.UpdatableObj):
                     while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
                         self.x += sign(self.hsp)
                     self.is_flying = False
+                    self.hsp = 0
                     hsp = 0
 
                 if place_meeting(self.x, self.y + vsp, block, self):
                     while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
                         self.y += sign(self.vsp)
-                    if block.tag == 'tp':
-                        opposite_block = block.get_opposite()
-                        if len(opposite_block) > 0:
-                            print('has opposite')
-                            print(opposite_block)
-                            if not (block.has_portal_on_side('top') and sign(self.vsp) == 1) and \
-                               not (block.has_portal_on_side('bottom') and sign(self.vsp) == -1):
-                                self.vsp = 0
-                    else:
-                        self.vsp = 0
-                    self.is_kicked_sideways = False
+
+                    self.vsp = 0
                     vsp = 0
+                    self.is_kicked_sideways = False
 
                 # Test for the right side of the player
                 if place_meeting(self.x + 1, self.y, block, self):
@@ -137,17 +126,36 @@ class Player(basic_classes.UpdatableObj):
                         self.hsp = 0
                         hsp = 0
 
-                    if block.tag == 'tp':
-                        if block.has_portal_on_side('right'):
-                            print('Touching portal right')
-                            self.teleporting = True
-
                     if block.tag == 'zabija_prawo':
                         self.lose_hp()
 
                     if block.tag == 'trojkat_prawo':
                         self.is_kicked_sideways = True
                         self.kick_sideways_speed = abs(self.kick_sideways_speed)
+
+                    if block.tag == 'tp':
+                        if block.has_portal_on_side('right'):
+                            print('Touching portal right')
+                            #
+                            # b = block.get_opposite()
+                            # if b is not None:
+                            #     if not self.teleporting:
+                            #         self.teleported_x = b.x
+                            #         self.teleported_y = b.y
+                            #
+                            #     if b.has_portal_on_side('bottom'):
+                            #         self.teleported_hsp = self.vsp
+                            #         self.teleported_vsp = self.hsp
+                            #     elif b.has_portal_on_side('top'):
+                            #         self.teleported_hsp = self.vsp
+                            #         self.teleported_vsp = self.hsp
+                            #     elif b.has_portal_on_side('right'):
+                            #         self.teleported_hsp = -self.hsp
+                            #         self.teleported_vsp = self.vsp
+                            #     elif b.has_portal_on_side('left'):
+                            #         self.teleported_hsp = self.hsp
+                            #         self.teleported_vsp = self.vsp
+                            # self.teleporting = True
 
                 # Test for player's head
                 if place_meeting(self.x, self.y - 1, block, self):
@@ -157,9 +165,9 @@ class Player(basic_classes.UpdatableObj):
                         # if keys[pygame.K_SPACE]:
                         #     vsp = 0.1
 
-                        if block.tag == 'tp':
-                            if block.has_portal_on_side('bottom'):
-                                print('Touching portal bottom')
+                    if block.tag == 'tp':
+                        if block.has_portal_on_side('bottom'):
+                            print('Touching portal bottom')
 
                 # Test for player's feet
                 if place_meeting(self.x, self.y + 1, block, self):
@@ -195,8 +203,16 @@ class Player(basic_classes.UpdatableObj):
                         self.y = block.y + block.size // 2 - self.size // 2
 
                     if block.tag == 'tp':
-                        if block.has_portal_on_side('top'):
-                            print('Touching portal top')
+                        if place_meeting(self.x+self.size, self.y + 1, block, self) and \
+                           place_meeting(self.x-self.size, self.y + 1, block, self):
+                            if block.has_portal_on_side('top'):
+                                print('Touching portal top')
+
+                                b = block.get_opposite()
+                                if b is not None and not self.teleporting:
+                                    self.teleporting = True
+                                    p = TeleportedPlayer(self, 'top', block, b)
+                                    self.parent.add_updatable(p)
 
         if self.vsp > 0:
             # Falling
@@ -205,9 +221,6 @@ class Player(basic_classes.UpdatableObj):
 
         self.x += hsp
         self.y += vsp
-        if self.teleporting:
-            self.teleported_x += hsp
-            self.teleported_y += vsp
 
         # If on the edge of the screen
         if not 0 <= self.x <= self.parent.WIDTH or \
@@ -232,11 +245,104 @@ class Player(basic_classes.UpdatableObj):
         self.parent.reset_level()
         self.drawing_death_animation = False
 
-    def draw(self, surface):
-        if self.visible and len(self.sprites) > 0:
-            index = min(int(self.sprite_index), len(self.sprites) - 1)
-            surface.blit(self.sprites[index], (self.x, self.y))
-            if self.teleporting:
-                surface.blit(self.sprites[index], (self.teleported_x, self.teleported_y))
-            self.sprite_index += self.animation_speed
-            self.sprite_index %= len(self.sprites)
+
+class TeleportedPlayer(basic_classes.UpdatableObj):
+    def __init__(self, player, original_side, original_block, opposite_block, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.original_player = player
+        self.original_block = original_block
+        self.original_side = original_side
+        self.opposite_block = opposite_block
+
+        self.sprites = self.original_player.sprites
+
+        for side in ['right', 'left', 'bottom', 'top']:
+            if self.opposite_block.has_portal_on_side(side):
+                self.destinated_side = side
+                break
+
+        if self.destinated_side == 'right':
+            offset_x = abs(self.original_player.x - self.original_block.x)
+            offset_y = abs(self.original_player.y - self.original_block.y)
+            self.x = -offset_x + self.opposite_block.x + self.opposite_block.width - self.original_player.width
+            self.y = self.opposite_block.y + self.opposite_block.height - offset_y - self.original_player.height
+
+        self.hsp = 0
+        self.vsp = 0
+
+    def update(self, keys):
+        super().update(keys)
+
+        self.sprite_index = self.original_player.sprite_index
+
+        hsp = self.original_player.hsp
+        vsp = self.original_player.vsp
+        if self.original_side == 'right':
+            if self.destinated_side == 'right':
+                self.hsp = -hsp
+                self.vsp = vsp
+            elif self.destinated_side == 'top':
+                self.vsp = hsp
+                self.hsp = vsp
+            elif self.destinated_side == 'bottom':
+                self.vsp = -hsp
+                self.hsp = -vsp
+        elif self.original_side == 'left':
+            if self.destinated_side == 'left':
+                self.hsp = -hsp
+                self.vsp = vsp
+            elif self.destinated_side == 'top':
+                self.hsp = -vsp
+                self.vsp = -hsp
+            elif self.destinated_side == 'bottom':
+                self.hsp = -vsp
+                self.vsp = hsp
+        elif self.original_side == 'top':
+            if self.destinated_side == 'top':
+                self.hsp = hsp
+                self.vsp = -vsp
+            elif self.destinated_side == 'right':
+                self.hsp = vsp
+                self.vsp = -hsp
+            elif self.destinated_side == 'left':
+                self.hsp = -vsp
+                self.vsp = vsp
+        elif self.original_side == 'bottom':
+            if self.destinated_side == 'bottom':
+                self.hsp = hsp
+                self.vsp = -vsp
+            elif self.destinated_side == 'right':
+                self.hsp = -vsp
+                self.vsp = hsp
+            elif self.destinated_side == 'left':
+                self.hsp = vsp
+                self.vsp = -hsp
+
+        hsp = self.hsp * self.parent.delta_time
+        vsp = self.vsp * self.parent.delta_time
+
+        for block in self.parent.game_tiles:
+            if block.tag == 'start' or block.tag == 'czesc' or block == self.original_block or block == self.opposite_block:
+                continue
+
+            if self.vsp == 0 and self.hsp == 0:
+                break
+
+            else:  # For every other block
+                if place_meeting(self.x + hsp, self.y, block, self):
+                    while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
+                        self.x += sign(self.hsp)
+                    self.hsp = 0
+                    hsp = 0
+
+                if place_meeting(self.x, self.y + vsp, block, self):
+                    while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
+                        self.y += sign(self.vsp)
+
+                    self.vsp = 0
+                    vsp = 0
+
+        self.x += hsp
+        self.y += vsp
+
+
