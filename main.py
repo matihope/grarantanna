@@ -4,6 +4,7 @@ from games.grarantanna import grarantanna_game
 WIDTH, HEIGHT = 1200, 800
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Grarantanna v0.4')
+pygame.display.set_icon(pygame.image.load('resources/ikonka.png'))
 
 
 def main():

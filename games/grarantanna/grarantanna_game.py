@@ -19,27 +19,30 @@ class Grarantanna(game_class.Game):
         self.level_name = ''
         self.volume = 25
 
+        self.finished_levels = []
+
         self.przyslowia = [
-            'Testujemy Poziom 1',  # Poziom 1
+            'BYĆ PRACOWITYM JAK PSZCZOŁA',  # Poziom 1
             'Testujemy Poziom 2',  # Poziom 2
-            'Testujemy Poziom 3',  # Poziom 3
-            'Testujemy Poziom 4',  # Poziom 4
+            'BEZ PRACY NIE MA KOŁACZY',  # Poziom 3
+            'DAROWANEMU KONIOWI W ZĘBY SIĘ NIE ZAGLĄDA',  # Poziom 4
             'Testujemy Poziom 5',  # Poziom 5
-            'Testujemy Poziom 6',  # Poziom 6
-            'Testujemy Poziom 7',  # Poziom 7
+            'FORTUNA KOŁEM SIĘ TOCZY',  # Poziom 6
+            'APETYT ROŚNIE W MIARĘ JEDZENIA',  # Poziom 7
             'Testujemy Poziom 8',  # Poziom 8
             'Testujemy Poziom 9',  # Poziom 9
             'Testujemy Poziom 10',  # Poziom 10
-            'Testujemy Poziom 11',  # Poziom 11
-            'Testujemy Poziom 12',  # Poziom 12
+            'CO MA WISIEC NIE UTONIE',  # Poziom 11
+            'LEPSZY WRÓBEL W GARŚCI NIŻ GOŁĄB NA DACHU',  # Poziom 12
             'Testujemy Poziom 13',  # Poziom 13
-            'Testujemy Poziom 14',  # Poziom 14
+            'DZIECI I RYBY GŁOSU NIE MAJĄ',  # Poziom 14
             'Testujemy Poziom 15'  # Poziom 15
             ]
         self.game_tiles = []
         self.player = None
 
         self.sound_przyciski_menu = pygame.mixer.Sound('resources/sounds/wybor_w_menu.wav')
+        self.sound_przyciski_menu.set_volume(0.3)
         self.sound_strzal = pygame.mixer.Sound('resources/sounds/strzal.wav')
         self.sound_strzal.set_volume(0.3)
         self.sound_teleport = pygame.mixer.Sound('resources/sounds/teleportacja.wav')
@@ -112,26 +115,22 @@ class Grarantanna(game_class.Game):
         self.player.reset_vars()
 
     def generate_texts(self, tiles_czesc, przyslowie):
-        try:
-            self.player.to_collect_string = przyslowie
-            n = int(len(przyslowie)/len(tiles_czesc))
-            text = [przyslowie[i:i + n] for i in range(0, len(przyslowie), n)]
-            for i in range(len(tiles_czesc)):
-                i %= len(text)-1
-                tiles_czesc[i].sprite_index = 0
-                tiles_czesc[i].text += text[i]
-                print(tiles_czesc[i].text)
-
-            full_by_now = ''.join(text)
-            second_part_przyslowie = przyslowie[len(full_by_now)-1:]
-            tiles_czesc[-1].text += second_part_przyslowie
-
-        except Exception as e:
-            print(e)
+        self.player.to_collect_string = przyslowie
+        self.player.to_collect_string_colored = ' ' * len(przyslowie)
+        n = round(len(przyslowie)/len(tiles_czesc))
+        text = [przyslowie[i:i + n] for i in range(0, len(przyslowie), n)]
+        for i in range(len(tiles_czesc)):
+            tiles_czesc[i].sprite_index = 0
+            tiles_czesc[i].text += text[i]
+            print(tiles_czesc[i].text)
 
     def set_volume(self, value):
         self.volume = value
         self.channel.set_volume(value/50)
+
+    def next_level(self):
+        self.finished_levels.append(self.level_name)
+        self.load_level(self.level_name[:-1] + str(int(self.level_name[6:]) + 1))
 
 
 class Menu(game_class.Game):
@@ -281,7 +280,7 @@ class LevelSelect2(game_class.Game):
                                                      bg_color=self.bg_color, folder_index=0)
 
         self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=620, target=self.back_to_menu,
-                                                             width=360, height=60, text='powrót do menu',
+                                                             width=360, height=60, text='wróć do menu',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
@@ -362,7 +361,7 @@ class LevelSelect3(game_class.Game):
                                                          bg_color=self.bg_color, folder_index=0)
 
         self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=620, target=self.back_to_menu,
-                                                             width=360, height=60, text='powrót do menu',
+                                                             width=360, height=60, text='wróć do menu',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
@@ -437,7 +436,7 @@ class Settings(game_class.Game):
         self.add_drawable(self.text)
 
         self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=650, target=self.back_to_menu,
-                                                             width=360, height=60, text='powrót do menu',
+                                                             width=360, height=60, text='wróć do menu',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
@@ -465,7 +464,7 @@ class Settings_in_game(game_class.Game):
         self.add_drawable(self.text)
 
         self.button_back_to_game = grarantanna_button.Button(x=self.WIDTH // 2, y=650, target=self.back_to_game,
-                                                             width=360, height=60, text='powrót do gry',
+                                                             width=360, height=60, text='wróć do gry',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
@@ -485,7 +484,7 @@ class Stop(game_class.Game):
         self.bg_color = basic_globals.BG_COLOR
 
         self.button_back_to_game = grarantanna_button.Button(x=self.WIDTH // 2, y=250, target=self.back_to_game,
-                                                             width=360, height=60, text='powrót do gry',
+                                                             width=360, height=60, text='wróć do gry',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
         self.button_reset_level = grarantanna_button.Button(x=self.WIDTH // 2, y=250 + 75, target=self.reset_level,

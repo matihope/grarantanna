@@ -40,13 +40,18 @@ class Player(basic_classes.UpdatableObj):
         self.moving_from_prev = 1
 
         self.collected_strings = []
-        self.collected_strings_string = ''
-        self.collect_indicator_offset_x = 25
+        self.to_collect_string = ''
+        self.to_collect_string_colored = ''
+        self.collect_indicator_offset = 10
+        self.font = pygame.font.Font('resources/joystix.ttf', 18)
 
         self.gun = grarantanna_gun.Gun(owner=self, x=self.x+3, y=self.y+3)
 
     def update(self, keys):
         super().update(keys)
+
+        if self.to_collect_string == ' ' * len(self.to_collect_string_colored):
+            self.parent.next_level()
 
         self.teleporting_prev = self.teleporting
         self.teleporting = False
@@ -329,3 +334,21 @@ class Player(basic_classes.UpdatableObj):
         self.vsp = -7
         self.drawing_death_animation = True
         self.parent.channel.play(self.parent.sound_smierc)
+
+    def draw(self, surface):
+        super().draw(surface)
+
+        text1 = self.font.render(self.to_collect_string, True, (0, 178, 255))
+        pygame.draw.rect(surface, (150, 150, 150), (0, 0, text1.get_width() + self.collect_indicator_offset * 2,
+                                                    text1.get_height() + self.collect_indicator_offset * 2))
+        surface.blit(text1, (self.collect_indicator_offset, self.collect_indicator_offset))
+
+        for string in self.collected_strings:
+            if string in self.to_collect_string:
+                index = self.to_collect_string.find(string)
+                self.to_collect_string_colored = self.to_collect_string_colored[:index] + string + self.to_collect_string_colored[len(string) + index:]
+                self.to_collect_string = self.to_collect_string[:index] + ' ' * len(string) + self.to_collect_string[len(string) + index:]
+                self.collected_strings.remove(string)
+
+        text2 = self.font.render(self.to_collect_string_colored, True, (249, 240, 7))
+        surface.blit(text2, (self.collect_indicator_offset, self.collect_indicator_offset))
