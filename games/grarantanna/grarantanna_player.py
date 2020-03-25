@@ -39,6 +39,10 @@ class Player(basic_classes.UpdatableObj):
         self.teleport_up_speed = -5
         self.moving_from_prev = 1
 
+        self.to_collect = []
+        self.to_collect_string = ''
+        self.collect_indicator_offset_x = 25
+
         self.gun = grarantanna_gun.Gun(owner=self, x=self.x+3, y=self.y+3)
 
     def update(self, keys):
@@ -144,6 +148,10 @@ class Player(basic_classes.UpdatableObj):
                                     self.teleporting_prev = True
                                     self.tp_self(b, block, 'left')
 
+                    if block.tag == 'czesc':
+                        self.to_collect.remove(block)
+                        block.letter_collect()
+
                 # Test for the left side of the player
                 if place_meeting(self.x - 1, self.y, block, self):
                     if block.tag == 'magnes_prawo' or block.tag == 'magnes_wszystko':
@@ -245,6 +253,13 @@ class Player(basic_classes.UpdatableObj):
                 not 0 <= self.y <= self.parent.HEIGHT:
             self.lose_hp()
 
+        self.to_collect_string
+        collected_string = ''
+        self.to_collect
+        # x = [part for part in ''.join([xx.text for xx in self.to_collect]) if part in self.to_collect_string.replace(' ', '')]
+        x =
+        print(x)
+
     def tp_self(self, block, block_original, current):
         dest = 'right'
 
@@ -274,7 +289,7 @@ class Player(basic_classes.UpdatableObj):
             self.y = block.y + block.height + 5
 
         self.moving_from_prev = 1
-        if (side == 'left' and dest == 'left') or (side == 'right' and dest == 'right'):
+        if (current == 'right' and dest == 'right') or (current == 'left' and dest == 'left'):
             self.moving_from_prev = -1
 
         self.gun.x = self.x + self.gun.size//2
@@ -286,21 +301,21 @@ class Player(basic_classes.UpdatableObj):
         self.vsp = 0
         self.hsp = 0
 
-        has_ground = False
-        while not has_ground:
-            self.y += 1
-            for block in self.parent.game_tiles:
-                if block.tag == 'start' or block.tag == 'czesc':
-                    continue
-
-                else:  # For every other block
-                    if place_meeting(self.x, self.y + 10, block, self):
-                        while not place_meeting(self.x, self.y + 1, block, self):
-                            self.y += 1
-                            has_ground = True
-                            if not 0 <= self.y <= self.parent.HEIGHT:
-                                break
-                        self.vsp = 0
+        # has_ground = False
+        # while not has_ground:
+        #     self.y += 1
+        #     for block in self.parent.game_tiles:
+        #         if block.tag == 'start' or block.tag == 'czesc':
+        #             continue
+        #
+        #         else:  # For every other block
+        #             if place_meeting(self.x, self.y + 10, block, self):
+        #                 while not place_meeting(self.x, self.y + 1, block, self):
+        #                     self.y += 1
+        #                     has_ground = True
+        #                     if not 0 <= self.y <= self.parent.HEIGHT:
+        #                         break
+        #                 self.vsp = 0
 
         self.gun.x = self.x + self.gun.size//2
         self.gun.y = self.y + self.gun.size//2

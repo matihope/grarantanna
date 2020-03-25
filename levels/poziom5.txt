@@ -110,6 +110,6 @@ tile:elementy1.png,5,480.0,160.0,40,40,0,kwadrat
 tile:elementy1.png,5,680.0,160.0,40,40,0,kwadrat
 tile:elementy1.png,5,760.0,160.0,40,40,0,kwadrat
 tile:elementy1.png,13,1040.0,240.0,40,40,0,tp
-tile:elementy1.png,13,200.0,160.0,40,40,0,DEFAULT
-tile:elementy1.png,13,720.0,680.0,40,40,0,DEFAULT
-tile:elementy1.png,1,760.0,680.0,40,40,0,DEFAULT
+tile:elementy1.png,13,200.0,160.0,40,40,0,tp
+tile:elementy1.png,13,720.0,680.0,40,40,0,tp
+tile:elementy1.png,1,760.0,680.0,40,40,0,czesc

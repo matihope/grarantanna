@@ -8,7 +8,8 @@ tile:elementy.png,2,1080.0,120.0,40,40,0,kwadrat
 tile:elementy.png,2,1080.0,80.0,40,40,0,kwadrat
 tile:elementy.png,2,1000.0,80.0,40,40,0,kwadrat
 tile:elementy.png,2,960.0,80.0,40,40,0,kwadrat
-tile:elementy.png,1,1040.0,80.0,40,40,0,start
+tile:elementy.png,1,1040.0,120.0,40,40,0,start
+tile:elementy.png,2,1040.0,80.0,40,40,0,kwadrat
 tile:elementy.png,2,920.0,80.0,40,40,0,kwadrat
 tile:elementy.png,2,880.0,80.0,40,40,0,kwadrat
 tile:elementy.png,17,840.0,80.0,40,40,0,znikajacy_kwadrat

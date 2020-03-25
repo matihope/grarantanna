@@ -18,7 +18,6 @@ class Block(basic_classes.UpdatableObj):
         self.height = self.size
         self.tag = kwargs.get('tag', 'DEFAULT')  # tag types { BLOCK, SPIKE, START, END }
         self.death_count_down = 0
-        self.grv = 0.4
 
         if self.tag == 'traktor':
             self.teleporting = False
@@ -28,6 +27,9 @@ class Block(basic_classes.UpdatableObj):
             self.size = 38
             self.width = 38
             self.height = 38
+            self.grv = 0.4
+            self.y += 2
+            self.teleport_up_speed = -5
 
         if self.tag == 'tp':
             self.colored_sides = []  # 0 == 'right', 1 == 'bottom', 2 == 'left', 3 == 'top'
@@ -45,6 +47,16 @@ class Block(basic_classes.UpdatableObj):
                 yellow_surf.blit(yellow_img, (0, 0))
                 self.portal_sprites_blue.append(blue_img)
                 self.portal_sprites_yellow.append(yellow_img)
+
+        if self.tag == 'czesc':
+            self.text = ''
+            self.font_size = 36
+            self.font_color = (227, 197, 56)
+            self.font = pygame.font.Font('resources/Born2bSportyV2.ttf', self.font_size)
+
+    def letter_collect(self):
+        self.rem()
+        print('Player collected letter')
 
     def rem(self, delay=0):
         if not self.dead:
@@ -72,17 +84,26 @@ class Block(basic_classes.UpdatableObj):
 
         elif self.tag == 'traktor':
             self.hsp = self.spd
-            # self.vsp += self.grv
+            self.vsp += self.grv
+
+            self.teleporting_prev = self.teleporting
+            self.teleporting = False
 
             for block in self.parent.game_tiles + [self.parent.player]:
-                if block == self:
+                if block == self or block.tag == 'czesc' or block.tag == 'start':
                     continue
 
-                if place_meeting(self.x + self.hsp, self.y, block, self):
-                    while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
-                        self.x += sign(self.hsp)
-                    self.hsp = 0
-                    self.spd = -self.spd
+                if block.tag != 'player':
+                    if place_meeting(self.x + self.hsp, self.y, block, self):
+                        while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
+                            self.x += sign(self.hsp)
+                        self.hsp = 0
+                        self.spd = -self.spd
+
+                    if place_meeting(self.x, self.y + self.vsp, block, self):
+                        while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
+                            self.y += sign(self.vsp)
+                        self.vsp = 0
 
                 # Test for the right side of the block
                 if place_meeting(self.x + 1, self.y, block, self):
@@ -115,7 +136,7 @@ class Block(basic_classes.UpdatableObj):
 
                 # Test for block's head
                 if place_meeting(self.x, self.y - 1, block, self):
-                    if block.tag == 'player':
+                    if block.tag == 'player' and not block.drawing_death_animation:
                         self.rem(100)
                         self.spd = 0
                     if block.tag == 'tp':
@@ -142,7 +163,7 @@ class Block(basic_classes.UpdatableObj):
                                     self.tp_self(b, block, 'top')
 
             self.x += self.hsp
-            # self.y += self.vsp
+            self.y += self.vsp
             if not 0 <= self.x <= self.parent.WIDTH or not 0 <= self.y <= self.parent.HEIGHT:
                 self.rem()
 
@@ -181,18 +202,55 @@ class Block(basic_classes.UpdatableObj):
                 return True
         return False
 
+    def tp_self(self, block, block_original, current):
+        dest = 'right'
+
+        sides = ['right', 'left', 'bottom', 'top']
+        if block == block_original:
+            sides = [s for s in sides if s != current]
+
+        for side in sides:
+            if block.has_portal_on_side(side):
+                dest = side
+                break
+
+        if dest == 'top':
+            self.vsp = min(self.vsp, self.teleport_up_speed)
+
+        if dest == 'right':
+            self.x = block.x + block.width + 5
+            self.y = block.y + block.height // 2 - self.height // 2
+        elif dest == 'left':
+            self.x = block.x - self.width - 5
+            self.y = block.y + block.height // 2 - self.height // 2
+        elif dest == 'top':
+            self.x = block.x + block.width // 2 - self.width // 2
+            self.y = block.y - self.height - 5
+        elif dest == 'bottom':
+            self.x = block.x + block.width // 2 - self.width // 2
+            self.y = block.y + block.height + 5
+
+        if (current == 'right' and dest == 'left') or (current == 'left' and dest == 'right'):
+            self.spd = -self.spd
+
     def draw(self, surface):
         if self.tag == 'traktor':
             if self.visible and len(self.sprites) > 0:
                 index = min(int(self.sprite_index), len(self.sprites) - 1)
                 surface.blit(pygame.transform.flip(self.sprites[index], True if sign(self.hsp) == -1 else False, False),
-                             (self.x, self.y))
+                             (self.x, self.y-1))
                 self.sprite_index += self.animation_speed
                 self.sprite_index %= len(self.sprites)
         else:
             super().draw(surface)
 
-        if self.tag == 'tp':
+        if self.tag == 'czesc':
+            text = self.font.render(self.text, True, self.font_color)
+            x = self.x + self.width//2 - text.get_width()/2
+            y = self.y + self.height//2 - text.get_height()/2
+            surface.blit(text, (x, y))
+
+        elif self.tag == 'tp':
             for side, color in self.colored_sides:
                 index = 0
                 if side == 'right':
