@@ -29,8 +29,8 @@ class Bullet(basic_classes.UpdatableObj):
     def update(self, keys):
 
         if not self.touched:
-            self.hsp -= length_dir_x(0.25, 90)
-            self.vsp -= -length_dir_y(0.25, 90)
+            self.hsp -= length_dir_x(0.2, 90)
+            self.vsp -= -length_dir_y(0.2, 90)
 
         for block in self.parent.game_tiles:
             if block.tag == 'start' or block.tag == 'czesc':

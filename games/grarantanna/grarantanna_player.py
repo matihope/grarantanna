@@ -37,9 +37,10 @@ class Player(basic_classes.UpdatableObj):
         self.teleporting = False
         self.teleporting_prev = False
         self.teleport_up_speed = -5
+        self.moving_from_prev = 1
 
         self.gun = grarantanna_gun.Gun(owner=self, x=self.x+3, y=self.y+3)
-        
+
     def update(self, keys):
         super().update(keys)
 
@@ -57,10 +58,13 @@ class Player(basic_classes.UpdatableObj):
             self.animation_speed = 1
             if self.y > self.parent.HEIGHT:
                 self.reset_vars()
+                self.parent.reset_level()
             return
 
         # Basic movement
-        self.hsp = (int(keys[pygame.K_d]) - int(keys[pygame.K_a])) * self.spd
+        self.hsp = (int(keys[pygame.K_d]) - int(keys[pygame.K_a])) * self.spd * self.moving_from_prev
+        if self.hsp == 0:
+            self.moving_from_prev = 1
         self.vsp += self.grv
 
         # If player is flying
@@ -80,7 +84,7 @@ class Player(basic_classes.UpdatableObj):
             self.on_boost = False
 
         if self.vsp < -15:
-           self.vsp = -15
+            self.vsp = -15
         elif self.vsp > 15:
             self.vsp = 15
 
@@ -108,18 +112,14 @@ class Player(basic_classes.UpdatableObj):
                     hsp = 0
 
                 if place_meeting(self.x, self.y + vsp, block, self):
-                    if not (block.tag == 'tp' and block.get_opposite() is not None and
-                            block.has_portal_on_side('top' if sign(self.vsp) == 1 else 'bottom') and
-                            place_meeting(self.x + self.size, self.y + sign(self.vsp), block, self) and
-                            place_meeting(self.x - self.size, self.y + sign(self.vsp), block, self)):
-                        while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
-                            self.y += sign(self.vsp)
-                            if not 0 <= self.y <= self.parent.HEIGHT:
-                                break
+                    while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
+                        self.y += sign(self.vsp)
+                        if not 0 <= self.y <= self.parent.HEIGHT:
+                            break
 
-                        self.vsp = 0
-                        vsp = 0
-                        self.is_kicked_sideways = False
+                    self.vsp = 0
+                    vsp = 0
+                    self.is_kicked_sideways = False
 
                 # Test for the right side of the player
                 if place_meeting(self.x + 1, self.y, block, self):
@@ -177,13 +177,13 @@ class Player(basic_classes.UpdatableObj):
 
                     if block.tag == 'tp':
                         if place_meeting(self.x+self.size, self.y - 1, block, self) and \
-                           place_meeting(self.x-self.size, self.y - 1, block, self):
+                                place_meeting(self.x-self.size, self.y - 1, block, self):
                             if block.has_portal_on_side('bottom'):
                                 self.teleporting = True
                                 b = block.get_opposite()
                                 if b is not None and not self.teleporting_prev:
                                     self.teleporting_prev = True
-                                    self.tp_self(b, block, 'top')
+                                    self.tp_self(b, block, 'bottom')
 
                 # Test for player's feet
                 if place_meeting(self.x, self.y + 1, block, self):
@@ -211,6 +211,8 @@ class Player(basic_classes.UpdatableObj):
                         self.flying_speed = -abs(self.flying_speed)
                         self.x = block.x-self.size
                         self.y = block.y + block.size // 2 - self.size // 2
+                        self.gun.x = self.x + self.gun.size//2
+                        self.gun.y = self.y + self.gun.size//2
 
                     if block.tag == 'leci_prawo':
                         self.is_flying = True
@@ -220,7 +222,7 @@ class Player(basic_classes.UpdatableObj):
 
                     if block.tag == 'tp':
                         if place_meeting(self.x+self.size, self.y + 1, block, self) and \
-                           place_meeting(self.x-self.size, self.y + 1, block, self):
+                                place_meeting(self.x-self.size, self.y + 1, block, self):
                             if block.has_portal_on_side('top'):
 
                                 self.teleporting = True
@@ -240,7 +242,7 @@ class Player(basic_classes.UpdatableObj):
 
         # If on the edge of the screen
         if not 0 <= self.x <= self.parent.WIDTH or \
-           not 0 <= self.y <= self.parent.HEIGHT:
+                not 0 <= self.y <= self.parent.HEIGHT:
             self.lose_hp()
 
     def tp_self(self, block, block_original, current):
@@ -255,39 +257,37 @@ class Player(basic_classes.UpdatableObj):
                 dest = side
                 break
 
-        self.vsp = min(self.vsp, self.teleport_up_speed)
+        if dest == 'top':
+            self.vsp = min(self.vsp, self.teleport_up_speed)
 
         if dest == 'right':
-            self.x = block.x + block.width + 3
+            self.x = block.x + block.width + 5
             self.y = block.y + block.height // 2 - self.height // 2
-
         elif dest == 'left':
-            self.x = block.x - self.width - 3
+            self.x = block.x - self.width - 5
             self.y = block.y + block.height // 2 - self.height // 2
-
         elif dest == 'top':
             self.x = block.x + block.width // 2 - self.width // 2
-            self.y = block.y - self.height - 3
-
+            self.y = block.y - self.height - 5
         elif dest == 'bottom':
             self.x = block.x + block.width // 2 - self.width // 2
-            self.y = block.y + block.height + 3
+            self.y = block.y + block.height + 5
+
+        self.moving_from_prev = 1
+        if side == 'left' and dest == 'left':
+            self.moving_from_prev = -1
+
+        if side == 'right' and dest == 'right':
+            self.moving_from_prev = -1
 
         self.gun.x = self.x + self.gun.size//2
         self.gun.y = self.y + self.gun.size//2
-
-    def lose_hp(self):
-        # What happens when dies
-        self.vsp = -7
-        self.drawing_death_animation = True
 
     def reset_vars(self):
         self.x = self.start_x
         self.y = self.start_y
         self.vsp = 0
         self.hsp = 0
-        self.gun.x = self.x
-        self.gun.y = self.y
 
         has_ground = False
         while not has_ground:
@@ -312,3 +312,8 @@ class Player(basic_classes.UpdatableObj):
         self.on_boost = False
         self.on_ground = False
         self.drawing_death_animation = False
+
+    def lose_hp(self):
+        # What happens when dies
+        self.vsp = -7
+        self.drawing_death_animation = True

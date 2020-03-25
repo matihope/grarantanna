@@ -6,7 +6,7 @@ from modules import \
     gamemaker_functions as gmf, \
     level_reader, block
 
-from games.grarantanna import grarantanna_player, grarantanna_button
+from games.grarantanna import grarantanna_player, grarantanna_button, grarantanna_slider
 
 
 class Grarantanna(game_class.Game):
@@ -223,6 +223,9 @@ class Settings(game_class.Game):
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.add_updatable(self.button_back_to_menu)
+        
+        self.volume_slider = grarantanna_slider.Slider(x=self.WIDTH // 2, y=350, text='glosnoc')
+        self.add_updatable(self.volume_slider)
 
     def back_to_menu(self):
         self.game.show_screen = 0
@@ -240,6 +243,9 @@ class Settings_in_game(game_class.Game):
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.add_updatable(self.button_back_to_game)
+
+        self.volume_slider = grarantanna_slider.Slider(x=self.WIDTH // 2, y=350, text='glosnoc')
+        self.add_updatable(self.volume_slider)
 
     def back_to_game(self):
         self.game.show_screen = 1
