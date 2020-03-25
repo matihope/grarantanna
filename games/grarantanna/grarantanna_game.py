@@ -22,22 +22,28 @@ class Grarantanna(game_class.Game):
         self.finished_levels = []
 
         self.przyslowia = [
-            'BYĆ PRACOWITYM JAK PSZCZOŁA',  # Poziom 1
-            'Testujemy Poziom 2',  # Poziom 2
-            'BEZ PRACY NIE MA KOŁACZY',  # Poziom 3
-            'DAROWANEMU KONIOWI W ZĘBY SIĘ NIE ZAGLĄDA',  # Poziom 4
-            'Testujemy Poziom 5',  # Poziom 5
-            'FORTUNA KOŁEM SIĘ TOCZY',  # Poziom 6
-            'APETYT ROŚNIE W MIARĘ JEDZENIA',  # Poziom 7
-            'Testujemy Poziom 8',  # Poziom 8
-            'Testujemy Poziom 9',  # Poziom 9
-            'Testujemy Poziom 10',  # Poziom 10
-            'CO MA WISIEC NIE UTONIE',  # Poziom 11
-            'LEPSZY WRÓBEL W GARŚCI NIŻ GOŁĄB NA DACHU',  # Poziom 12
+            'CO NAGLE, TO PO DIABLE',  # Poziom 1
+            'GDY KOTA NIE MA, MYSZY HARCUJĄ',  # Poziom 2
+            'KRADZIONE NIE TUCZY',  # Poziom 3
+            'KTO PYTA, NIE BŁĄDZI',  # Poziom 4
+            'KUĆ ŻELAZO, PUKI GORĄCE',  # Poziom 5
+            'Testujemy poz 6',  # Poziom 6
+            'Testujemy poz 7',  # Poziom 7
+            'BEZ PRACY NIE MA KOŁACZY',  # Poziom 8
+            'DAROWANEMU KONIOWI W ZĘBY SIĘ NIE ZAGLĄDA',  # Poziom 9
+            'NIE CHWAL DNIA PRZED ZACHODEM SŁOŃCA',  # Poziom 10
+            'FORTUNA KOŁEM SIĘ TOCZY',  # Poziom 11
+            'APETYT ROŚNIE W MIARĘ JEDZENIA',  # Poziom 12
             'Testujemy Poziom 13',  # Poziom 13
             'DZIECI I RYBY GŁOSU NIE MAJĄ',  # Poziom 14
-            'Testujemy Poziom 15'  # Poziom 15
+            'Testujemy Poziom 15',  # Poziom 15
+            'CO MA WISIEĆ, NIE UTONIE',  # Poziom 16
+            'LEPSZY WRÓBEL W GARŚCI NIŻ GOŁĄB NA DACHU',  # Poziom 17
+            'Testujemy poz 18',  # Poziom 18
+            'DZIECI I RYBY GŁOSU NIE MAJĄ',  # Poziom 19
+            'Testujemy poz 20'  # Poziom 20
             ]
+
         self.game_tiles = []
         self.player = None
 

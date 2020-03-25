@@ -324,7 +324,7 @@ class Player(basic_classes.UpdatableObj):
 
         self.spd = abs(self.spd)
         self.collected_strings = []
-        self.collected_strings_string = ''
+        self.is_flying = False
         self.on_boost = False
         self.on_ground = False
         self.drawing_death_animation = False
