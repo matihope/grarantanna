@@ -17,27 +17,27 @@ def main():
     clock = pygame.time.Clock()
     while game.run:
         if game.show_screen == 0:  # Menu
-            menu.update(clock.tick())
+            menu.update(clock.tick(60))
             menu.draw()
             screen = menu.get_surface()
         elif game.show_screen == 1:  # Game
-            game.update(clock.tick())
+            game.update(clock.tick(60))
             game.draw()
             screen = game.get_surface()
         elif game.show_screen == 2:  # Select level
-            level_select.update(clock.tick())
+            level_select.update(clock.tick(60))
             level_select.draw()
             screen = level_select.get_surface()
         elif game.show_screen == 3:  # Settings
-            settings.update(clock.tick())
+            settings.update(clock.tick(60))
             settings.draw()
             screen = settings.get_surface()
         elif game.show_screen == 4:  # Stop
-            stop.update(clock.tick())
+            stop.update(clock.tick(60))
             stop.draw()
             screen = stop.get_surface()
         elif game.show_screen == 5:  # Setings in game
-            settings_in_game.update(clock.tick())
+            settings_in_game.update(clock.tick(60))
             settings_in_game.draw()
             screen = settings_in_game.get_surface()
 

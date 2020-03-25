@@ -70,29 +70,9 @@ class Grarantanna(game_class.Game):
 
     def load_player(self, player_x, player_y):
         self.player = grarantanna_player.Player(x=player_x, y=player_y, size=20)
-        for block in self.game_tiles:
-            if block.tag == 'start' or block.tag == 'czesc':
-                continue
-
-            if self.player.vsp == 0 and self.player.hsp == 0:
-                break
-
-            else:  # For every other block
-                if gmf.place_meeting(self.player.x, self.player.y + 1, block, self):
-                    while not gmf.place_meeting(self.player.x, self.player.y + 1, block, self):
-                        self.player.y += 1
-                        if not 0 <= self.player.y <= self.HEIGHT:
-                            break
-                    self.player.vsp = 0
-
-                if gmf.place_meeting(self.gun.x, self.gun.y + 1, block, self):
-                    while not gmf.place_meeting(self.gun.x, self.gun.y + 1, block, self):
-                        self.gun.y += 1
-                        if not 0 <= self.gun.y <= self.HEIGHT:
-                            break
-                    self.gun.vsp = 0
         self.add_updatable(self.player, draw_order=1)
         self.add_updatable(self.player.gun, draw_order=3)
+        self.player.reset_vars()
 
 
 class Menu(game_class.Game):

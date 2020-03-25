@@ -52,8 +52,8 @@ class Player(basic_classes.UpdatableObj):
 
         # If player died
         if self.drawing_death_animation:
-            self.vsp += self.grv * self.parent.delta_time
-            self.y += self.vsp * self.parent.delta_time
+            self.vsp += self.grv
+            self.y += self.vsp
             self.animation_speed = 1
             if self.y > self.parent.HEIGHT:
                 self.reset_vars()
@@ -61,7 +61,7 @@ class Player(basic_classes.UpdatableObj):
 
         # Basic movement
         self.hsp = (int(keys[pygame.K_d]) - int(keys[pygame.K_a])) * self.spd
-        self.vsp += self.grv * self.parent.delta_time
+        self.vsp += self.grv
 
         # If player is flying
         if self.is_flying:
@@ -84,10 +84,10 @@ class Player(basic_classes.UpdatableObj):
         elif self.vsp > 15:
             self.vsp = 15
 
-        hsp = self.hsp * self.parent.delta_time
-        vsp = self.vsp * self.parent.delta_time
+        hsp = self.hsp
+        vsp = self.vsp
 
-        self.animation_speed = 0.6 * self.parent.delta_time * sign(self.hsp)
+        self.animation_speed = 0.6 * sign(self.hsp)
 
         # Collision handling
         for block in self.parent.game_tiles:
@@ -288,8 +288,27 @@ class Player(basic_classes.UpdatableObj):
         self.hsp = 0
         self.gun.x = self.x
         self.gun.y = self.y
+
+        has_ground = False
+        while not has_ground:
+            self.y += 1
+            for block in self.parent.game_tiles:
+                if block.tag == 'start' or block.tag == 'czesc':
+                    continue
+
+                else:  # For every other block
+                    if place_meeting(self.x, self.y + 10, block, self):
+                        while not place_meeting(self.x, self.y + 1, block, self):
+                            self.y += 1
+                            has_ground = True
+                            if not 0 <= self.y <= self.parent.HEIGHT:
+                                break
+                        self.vsp = 0
+
+        self.gun.x = self.x + self.gun.size//2
+        self.gun.y = self.y + self.gun.size//2
+
         self.spd = abs(self.spd)
         self.on_boost = False
         self.on_ground = False
-        self.parent.reset_level()
         self.drawing_death_animation = False

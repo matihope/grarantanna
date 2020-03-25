@@ -44,7 +44,7 @@ class Block(basic_classes.UpdatableObj):
         super().update(keys)
 
         if self.tag[:9] == 'wagon':
-            self.hsp = self.spd * self.parent.delta_time
+            self.hsp = self.spd
 
             for tile in self.parent.game_tiles + [self.parent.player, self.parent.player.gun]:
                 if tile == self:
@@ -66,7 +66,7 @@ class Block(basic_classes.UpdatableObj):
 
             self.x += self.hsp
 
-        self.death_count_down = max(0, self.death_count_down-12*self.parent.delta_time)
+        self.death_count_down = max(0, self.death_count_down-12)
         if self.dead and self.death_count_down == 0:
             self.parent.remove_obj(self)
             self.parent.game_tiles.remove(self)
