@@ -129,8 +129,9 @@ class Grarantanna(game_class.Game):
         self.channel.set_volume(value/50)
 
     def next_level(self):
-        self.finished_levels.append(self.level_name)
-        self.load_level(self.level_name[:-1] + str(int(self.level_name[6:]) + 1))
+        level_index = int(self.level_name[6:])
+        self.finished_levels.append(level_index)
+        self.load_level('poziom' + str(level_index + 1))
 
 
 class Menu(game_class.Game):
@@ -173,10 +174,91 @@ class Menu(game_class.Game):
         self.game.load_level('poziom1')
 
     def select_level(self):
-        self.game.show_screen = 2
+        self.game.show_screen = 8
 
     def settings(self):
         self.game.show_screen = 3
+
+
+class LevelSelect0(game_class.Game):
+    def __init__(self, game, width, height, fps=60):
+        super().__init__(width, height, fps)
+        self.game = game
+
+        self.bg_color = basic_globals.BG_COLOR
+        self.font_name = 'resources/Born2bSportyV2.ttf'
+        self.font_size = 60
+        self.font_color = (227, 197, 56)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('Wprowadzenie', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=self.WIDTH // 2 - rendered.get_width() // 2, y=200, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+
+        self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=620, target=self.back_to_menu,
+                                                             width=360, height=60, text='wróć do menu',
+                                                             font_grow_ratio=1.2,
+                                                             bg_color=self.bg_color, folder_index=1)
+
+        self.button_next = grarantanna_button.Button(x=1000, y=100, target=self.next,
+                                                     width=360, height=60, text='następne',
+                                                     font_grow_ratio=1.2,
+                                                     bg_color=self.bg_color, folder_index=0)
+
+        self.button_select_level_1 = grarantanna_button.Button(x=self.WIDTH // 6 * 1, y=400, target=self.select_level_1,
+                                                               width=100, height=100, text='Pokój 1', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+        self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 6 * 2, y=400, target=self.select_level_2,
+                                                               width=100, height=100, text='Pokój 2', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+        self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 6 * 3, y=400, target=self.select_level_3,
+                                                               width=100, height=100, text='Pokój 3', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+        self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 6 * 4, y=400, target=self.select_level_4,
+                                                               width=100, height=100, text='Pokój 4', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+        self.button_select_level_5 = grarantanna_button.Button(x=self.WIDTH // 6 * 5, y=400, target=self.select_level_5,
+                                                               width=100, height=100, text='Pokój 5', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+
+        self.add_updatable(self.button_next)
+        self.add_updatable(self.button_back_to_menu)
+        self.add_updatable(self.button_select_level_1)
+        self.add_updatable(self.button_select_level_2)
+        self.add_updatable(self.button_select_level_3)
+        self.add_updatable(self.button_select_level_4)
+        self.add_updatable(self.button_select_level_5)
+
+    def back_to_menu(self):
+        self.game.show_screen = 0
+
+    def next(self):
+        self.game.show_screen = 2
+
+    def select_level_1(self):
+        self.game.show_screen = 1
+        self.game.load_level('poziom1')
+
+    def select_level_2(self):
+        self.game.show_screen = 1
+        self.game.load_level('poziom2')
+
+    def select_level_3(self):
+        self.game.show_screen = 1
+        self.game.load_level('poziom3')
+
+    def select_level_4(self):
+        self.game.show_screen = 1
+        self.game.load_level('poziom4')
+
+    def select_level_5(self):
+        self.game.show_screen = 1
+        self.game.load_level('poziom5')
 
 
 class LevelSelect1(game_class.Game):
@@ -203,24 +285,35 @@ class LevelSelect1(game_class.Game):
                                                      width=360, height=60, text='następne',
                                                      font_grow_ratio=1.2,
                                                      bg_color=self.bg_color, folder_index=0)
+        self.button_previous = grarantanna_button.Button(x=200, y=100, target=self.previous,
+                                                         width=360, height=60, text='poprzednie',
+                                                         font_grow_ratio=1.2,
+                                                         bg_color=self.bg_color, folder_index=0)
 
         self.button_select_level_1 = grarantanna_button.Button(x=self.WIDTH // 6 * 1, y=400, target=self.select_level_1,
-                                                               width=100, height=100, text='Pokój 1', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               width=100, height=100, text='Pokój 6', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
         self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 6 * 2, y=400, target=self.select_level_2,
-                                                               width=100, height=100, text='Pokój 2', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               width=100, height=100, text='Pokój 7', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
         self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 6 * 3, y=400, target=self.select_level_3,
-                                                               width=100, height=100, text='Pokój 3', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               width=100, height=100, text='Pokój 8', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
         self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 6 * 4, y=400, target=self.select_level_4,
-                                                               width=100, height=100, text='Pokój 4', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               width=100, height=100, text='Pokój 9', font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
         self.button_select_level_5 = grarantanna_button.Button(x=self.WIDTH // 6 * 5, y=400, target=self.select_level_5,
-                                                               width=100, height=100, text='Pokój 5', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               width=100, height=100, text='Pokój 10',
+                                                               font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
 
         self.add_updatable(self.button_next)
+        self.add_updatable(self.button_previous)
         self.add_updatable(self.button_back_to_menu)
         self.add_updatable(self.button_select_level_1)
         self.add_updatable(self.button_select_level_2)
@@ -234,25 +327,28 @@ class LevelSelect1(game_class.Game):
     def next(self):
         self.game.show_screen = 6
 
+    def previous(self):
+        self.game.show_screen = 8
+
     def select_level_1(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom1')
+        self.game.load_level('poziom6')
 
     def select_level_2(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom2')
+        self.game.load_level('poziom7')
 
     def select_level_3(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom3')
+        self.game.load_level('poziom8')
 
     def select_level_4(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom4')
+        self.game.load_level('poziom9')
 
     def select_level_5(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom5')
+        self.game.load_level('poziom10')
 
 
 class LevelSelect2(game_class.Game):
@@ -285,21 +381,30 @@ class LevelSelect2(game_class.Game):
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.button_select_level_1 = grarantanna_button.Button(x=self.WIDTH // 6 * 1, y=400, target=self.select_level_1,
-                                                               width=100, height=100, text='Pokój 6', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
-        self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 6 * 2, y=400, target=self.select_level_2,
-                                                               width=100, height=100, text='Pokój 7', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
-        self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 6 * 3, y=400, target=self.select_level_3,
-                                                               width=100, height=100, text='Pokój 8', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
-        self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 6 * 4, y=400, target=self.select_level_4,
-                                                               width=100, height=100, text='Pokój 9', font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
-        self.button_select_level_5 = grarantanna_button.Button(x=self.WIDTH // 6 * 5, y=400, target=self.select_level_5,
-                                                               width=100, height=100, text='Pokój 10',
+                                                               width=100, height=100, text='Pokój 11',
                                                                font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+        self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 6 * 2, y=400, target=self.select_level_2,
+                                                               width=100, height=100, text='Pokój 12',
+                                                               font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+        self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 6 * 3, y=400, target=self.select_level_3,
+                                                               width=100, height=100, text='Pokój 13',
+                                                               font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+        self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 6 * 4, y=400, target=self.select_level_4,
+                                                               width=100, height=100, text='Pokój 14',
+                                                               font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
+        self.button_select_level_5 = grarantanna_button.Button(x=self.WIDTH // 6 * 5, y=400, target=self.select_level_5,
+                                                               width=100, height=100, text='Pokój 15',
+                                                               font_grow_ratio=1,
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
 
         self.add_updatable(self.button_next)
         self.add_updatable(self.button_previous)
@@ -321,23 +426,23 @@ class LevelSelect2(game_class.Game):
 
     def select_level_1(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom6')
+        self.game.load_level('poziom11')
 
     def select_level_2(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom7')
+        self.game.load_level('poziom12')
 
     def select_level_3(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom8')
+        self.game.load_level('poziom13')
 
     def select_level_4(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom9')
+        self.game.load_level('poziom14')
 
     def select_level_5(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom10')
+        self.game.load_level('poziom15')
 
 
 class LevelSelect3(game_class.Game):
@@ -366,25 +471,30 @@ class LevelSelect3(game_class.Game):
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.button_select_level_1 = grarantanna_button.Button(x=self.WIDTH // 6 * 1, y=400, target=self.select_level_1,
-                                                               width=100, height=100, text='Pokój 11',
+                                                               width=100, height=100, text='Pokój 16',
                                                                font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
         self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 6 * 2, y=400, target=self.select_level_2,
-                                                               width=100, height=100, text='Pokój 12',
+                                                               width=100, height=100, text='Pokój 17',
                                                                font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
         self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 6 * 3, y=400, target=self.select_level_3,
-                                                               width=100, height=100, text='Pokój 13',
+                                                               width=100, height=100, text='Pokój 18',
                                                                font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
         self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 6 * 4, y=400, target=self.select_level_4,
-                                                               width=100, height=100, text='Pokój 14',
+                                                               width=100, height=100, text='Pokój 19',
                                                                font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
         self.button_select_level_5 = grarantanna_button.Button(x=self.WIDTH // 6 * 5, y=400, target=self.select_level_5,
-                                                               width=100, height=100, text='Pokój 15',
+                                                               width=100, height=100, text='Pokój 20',
                                                                font_grow_ratio=1,
-                                                               bg_color=self.bg_color, folder_index=2)
+                                                               bg_color=self.bg_color, folder_index=2,
+                                                               level_button=True)
 
         self.add_updatable(self.button_back_to_menu)
         self.add_updatable(self.button_previous)
@@ -402,23 +512,23 @@ class LevelSelect3(game_class.Game):
 
     def select_level_1(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom11')
+        self.game.load_level('poziom16')
 
     def select_level_2(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom12')
+        self.game.load_level('poziom17')
 
     def select_level_3(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom13')
+        self.game.load_level('poziom18')
 
     def select_level_4(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom14')
+        self.game.load_level('poziom19')
 
     def select_level_5(self):
         self.game.show_screen = 1
-        self.game.load_level('poziom15')
+        self.game.load_level('poziom20')
 
 
 class Settings(game_class.Game):

@@ -31,6 +31,8 @@ class Button(basic_classes.UpdatableObj):
         self.font_size = kwargs.get('font_size', 32)
         self.font_color = kwargs.get('font_color', (227, 197, 56))
         self.font_grow_ratio = kwargs.get('font_grow_ratio', 1.2)
+        self.folder_index = kwargs.get("folder_index", 0)
+        self.level_button = kwargs.get('level_button', False)
         s1 = pygame.Surface((self.width, self.height))
         s2 = s1.copy()
         s3 = s1.copy()
@@ -39,14 +41,32 @@ class Button(basic_classes.UpdatableObj):
         s3.fill(self.bg_color)
         self.sprites = [s1, s2, s3]
         for i in range(len(self.sprites)):
-            img = pygame.image.load(os.path.join(f'resources/button{kwargs.get("folder_index", 0)}', f'button{i}.png'))
+            img = pygame.image.load(os.path.join(f'resources/button{self.folder_index}', f'button{i}.png'))
             self.sprites[i].blit(img, ((self.width-img.get_width())/2, (self.height-img.get_height())/2))
 
         self.pressed_before = False
         self.pressed = False
         self.long_press = kwargs.get('long_press', False)
+        self.finished = False
+
+    def finished_this_level(self):
+        s1 = pygame.Surface((self.width, self.height))
+        s2 = s1.copy()
+        s3 = s1.copy()
+        s1.fill(self.bg_color)
+        s2.fill(self.bg_color)
+        s3.fill(self.bg_color)
+        self.sprites = [s1, s2, s3]
+        for i in range(len(self.sprites)):
+            img = pygame.image.load(os.path.join(f'resources/button{self.folder_index}', f'button{i+3}.png'))
+            self.sprites[i].blit(img, ((self.width - img.get_width()) / 2, (self.height - img.get_height()) / 2))
 
     def update(self, keys):
+
+        if self.level_button and int(self.text[6:]) in self.parent.game.finished_levels and not self.finished:
+            self.finished_this_level()
+            self.finished = True
+
         self.sprite_index = 0
         mouse_press = self.parent.mouse.get_pressed()[0]
         mouse_x, mouse_y = self.parent.mouse.get_pos()

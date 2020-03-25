@@ -338,17 +338,19 @@ class Player(basic_classes.UpdatableObj):
     def draw(self, surface):
         super().draw(surface)
 
-        text1 = self.font.render(self.to_collect_string, True, (0, 178, 255))
+        text1 = self.font.render(self.to_collect_string, True, (20, 20, 20))  # Not collected
         pygame.draw.rect(surface, (150, 150, 150), (0, 0, text1.get_width() + self.collect_indicator_offset * 2,
                                                     text1.get_height() + self.collect_indicator_offset * 2))
         surface.blit(text1, (self.collect_indicator_offset, self.collect_indicator_offset))
 
         for string in self.collected_strings:
-            if string in self.to_collect_string:
-                index = self.to_collect_string.find(string)
-                self.to_collect_string_colored = self.to_collect_string_colored[:index] + string + self.to_collect_string_colored[len(string) + index:]
-                self.to_collect_string = self.to_collect_string[:index] + ' ' * len(string) + self.to_collect_string[len(string) + index:]
-                self.collected_strings.remove(string)
+            for letter in string:
+                if letter == ' ':
+                    continue
+                index = self.to_collect_string.find(letter)
+                self.to_collect_string_colored = self.to_collect_string_colored[:index] + letter + self.to_collect_string_colored[index + 1:]
+                self.to_collect_string = self.to_collect_string[:index] + ' ' + self.to_collect_string[index + 1:]
+            self.collected_strings.remove(string)
 
-        text2 = self.font.render(self.to_collect_string_colored, True, (249, 240, 7))
+        text2 = self.font.render(self.to_collect_string_colored, True, (249, 240, 7))  # Collected
         surface.blit(text2, (self.collect_indicator_offset, self.collect_indicator_offset))

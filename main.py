@@ -16,6 +16,7 @@ def main():
     settings_in_game = grarantanna_game.Settings_in_game(width=WIDTH, height=HEIGHT, game=game)
     level_select2 = grarantanna_game.LevelSelect2(width=WIDTH, height=HEIGHT, game=game)
     level_select3 = grarantanna_game.LevelSelect3(width=WIDTH, height=HEIGHT, game=game)
+    level_select0 = grarantanna_game.LevelSelect0(width=WIDTH, height=HEIGHT, game=game)
 
     clock = pygame.time.Clock()
     while game.run:
@@ -53,7 +54,10 @@ def main():
             level_select3.update(clock.tick(game.FPS))
             level_select3.draw()
             screen = level_select3.get_surface()
-
+        elif game.show_screen == 8:  # Select level 0
+            level_select0.update(clock.tick(game.FPS))
+            level_select0.draw()
+            screen = level_select0.get_surface()
 
         win.blit(screen, (0, 0))
         pygame.display.flip()

@@ -57,7 +57,6 @@ class Block(basic_classes.UpdatableObj):
     def letter_collect(self):
         self.rem()
         self.parent.channel.play(self.parent.sound_zdobycie_punktu)
-        print('Player collected letter')
 
     def rem(self, delay=0):
         if not self.dead:
