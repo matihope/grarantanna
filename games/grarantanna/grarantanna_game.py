@@ -1,11 +1,12 @@
 import pygame
-import math
+import copy
 from modules import \
     basic_classes, \
     basic_globals, \
     game_class, \
     gamemaker_functions as gmf, \
     level_reader, block
+import os
 
 from games.grarantanna import grarantanna_player, grarantanna_button, grarantanna_slider
 
@@ -16,11 +17,12 @@ class Grarantanna(game_class.Game):
         self.bg_color = basic_globals.BG_COLOR
         self.show_screen = 0
         self.level_name = ''
+        self.volume = 25
 
         self.przyslowia = [
             'Testujemy Poziom 1',  # Poziom 1
             'Testujemy Poziom 2',  # Poziom 2
-            'Testujemy Poziom 3______',  # Poziom 3
+            'Testujemy Poziom 3',  # Poziom 3
             'Testujemy Poziom 4',  # Poziom 4
             'Testujemy Poziom 5',  # Poziom 5
             'Testujemy Poziom 6',  # Poziom 6
@@ -37,14 +39,15 @@ class Grarantanna(game_class.Game):
         self.game_tiles = []
         self.player = None
 
-        # self.sound_przyciski_menu = pygame.mixer.Sound('resources/wybor_w_menu.wav')
-        # self.sound_strzal = pygame.mixer.Sound('resources/strzal')
-        # self.sound_teleport = pygame.mixer.Sound('resources/teleportacja.wav')
-        # self.sound_ruszanie = pygame.mixer.Sound('resources/')
-        # self.sound_skok = pygame.mixer.Sound('resources/skok.wav')
-        # self.sound_smierc = pygame.mixer.Sound('resources/smierc.wav')
-        # self.sound_zabicie_traktora = pygame.mixer.Sound('')
-        # self.sound_zdobycie_punktu = pygame.mixer.Sound('zdobycie_punktu.wav')
+        self.sound_przyciski_menu = pygame.mixer.Sound('resources/sounds/wybor_w_menu.wav')
+        self.sound_strzal = pygame.mixer.Sound('resources/sounds/strzal.wav')
+        self.sound_strzal.set_volume(0.3)
+        self.sound_teleport = pygame.mixer.Sound('resources/sounds/teleportacja.wav')
+        self.sound_skok = pygame.mixer.Sound('resources/sounds/skok.wav')
+        self.sound_smierc = pygame.mixer.Sound('resources/sounds/smierc.wav')
+        self.sound_zabicie_traktora = pygame.mixer.Sound('resources/sounds/traktor.wav')
+        self.sound_zdobycie_punktu = pygame.mixer.Sound('resources/sounds/zdobycie_punktu.wav')
+        self.channel = pygame.mixer.find_channel(True)
 
     def fix_kolce(self, tile):
         sprite = tile.sprites[tile.sprite_index]
@@ -126,6 +129,10 @@ class Grarantanna(game_class.Game):
         except Exception as e:
             print(e)
 
+    def set_volume(self, value):
+        self.volume = value
+        self.channel.set_volume(value/50)
+
 
 class Menu(game_class.Game):
     def __init__(self, game, width, height, fps=60):
@@ -133,15 +140,29 @@ class Menu(game_class.Game):
         self.game = game
         self.bg_color = basic_globals.BG_COLOR
 
+        rendered = pygame.image.load(os.path.join(f'resources/logo.png'))
+        self.logo = basic_classes.DrawableObj(x=300, y=105, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.logo)
+
+        self.font_name = 'resources/Born2bSportyV2.ttf'
+        self.font_size = 120
+        self.font_color = (227, 197, 56)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('DISK-O-TRUCK', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=75, y=80, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+
         self.button_start = grarantanna_button.Button(x=self.WIDTH // 2, y=550, target=self.start, width=240, height=60,
                                                       bg_color=self.bg_color, folder_index=0, text='START')
 
         self.button_select_level = grarantanna_button.Button(x=self.WIDTH // 2, y=625, target=self.select_level,
-                                                             width=360, height=60, text='select level',
+                                                             width=360, height=60, text='wybierz pokój',
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.button_settings = grarantanna_button.Button(x=self.WIDTH // 2, y=700, target=self.settings, width=240,
-                                                         height=60, text='settings',
+                                                         height=60, text='ustawienia',
                                                          bg_color=self.bg_color, folder_index=0)
 
         self.add_updatable(self.button_start)
@@ -175,29 +196,29 @@ class LevelSelect1(game_class.Game):
         self.add_drawable(self.text)
 
         self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=620, target=self.back_to_menu,
-                                                             width=360, height=60, text='back to menu',
+                                                             width=360, height=60, text='wróć do menu',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.button_next = grarantanna_button.Button(x=1000, y=100, target=self.next,
-                                                     width=360, height=60, text='next',
+                                                     width=360, height=60, text='następne',
                                                      font_grow_ratio=1.2,
                                                      bg_color=self.bg_color, folder_index=0)
 
         self.button_select_level_1 = grarantanna_button.Button(x=self.WIDTH // 6 * 1, y=400, target=self.select_level_1,
-                                                               width=100, height=100, text='Level 1', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 1', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 6 * 2, y=400, target=self.select_level_2,
-                                                               width=100, height=100, text='Level 2', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 2', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 6 * 3, y=400, target=self.select_level_3,
-                                                               width=100, height=100, text='Level 3', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 3', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 6 * 4, y=400, target=self.select_level_4,
-                                                               width=100, height=100, text='Level 4', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 4', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_5 = grarantanna_button.Button(x=self.WIDTH // 6 * 5, y=400, target=self.select_level_5,
-                                                               width=100, height=100, text='Level 5', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 5', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
 
         self.add_updatable(self.button_next)
@@ -251,33 +272,33 @@ class LevelSelect2(game_class.Game):
         self.add_drawable(self.text)
 
         self.button_previous = grarantanna_button.Button(x=200, y=100, target=self.previous,
-                                                         width=360, height=60, text='previous',
+                                                         width=360, height=60, text='poprzednie',
                                                          font_grow_ratio=1.2,
                                                          bg_color=self.bg_color, folder_index=0)
         self.button_next = grarantanna_button.Button(x=1000, y=100, target=self.next,
-                                                     width=360, height=60, text='next',
+                                                     width=360, height=60, text='następne',
                                                      font_grow_ratio=1.2,
                                                      bg_color=self.bg_color, folder_index=0)
 
         self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=620, target=self.back_to_menu,
-                                                             width=360, height=60, text='back to menu',
+                                                             width=360, height=60, text='powrót do menu',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.button_select_level_1 = grarantanna_button.Button(x=self.WIDTH // 6 * 1, y=400, target=self.select_level_1,
-                                                               width=100, height=100, text='Level 6', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 6', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 6 * 2, y=400, target=self.select_level_2,
-                                                               width=100, height=100, text='Level 7', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 7', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 6 * 3, y=400, target=self.select_level_3,
-                                                               width=100, height=100, text='Level 8', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 8', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 6 * 4, y=400, target=self.select_level_4,
-                                                               width=100, height=100, text='Level 9', font_grow_ratio=1,
+                                                               width=100, height=100, text='Pokój 9', font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_5 = grarantanna_button.Button(x=self.WIDTH // 6 * 5, y=400, target=self.select_level_5,
-                                                               width=100, height=100, text='Level 10',
+                                                               width=100, height=100, text='Pokój 10',
                                                                font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
 
@@ -336,33 +357,33 @@ class LevelSelect3(game_class.Game):
         self.add_drawable(self.text)
 
         self.button_previous = grarantanna_button.Button(x=200, y=100, target=self.previous,
-                                                         width=360, height=60, text='previous',
+                                                         width=360, height=60, text='poprzednie',
                                                          font_grow_ratio=1.2,
                                                          bg_color=self.bg_color, folder_index=0)
 
         self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=620, target=self.back_to_menu,
-                                                             width=360, height=60, text='back to menu',
+                                                             width=360, height=60, text='powrót do menu',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.button_select_level_1 = grarantanna_button.Button(x=self.WIDTH // 6 * 1, y=400, target=self.select_level_1,
-                                                               width=100, height=100, text='Level 11',
+                                                               width=100, height=100, text='Pokój 11',
                                                                font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_2 = grarantanna_button.Button(x=self.WIDTH // 6 * 2, y=400, target=self.select_level_2,
-                                                               width=100, height=100, text='Level 12',
+                                                               width=100, height=100, text='Pokój 12',
                                                                font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_3 = grarantanna_button.Button(x=self.WIDTH // 6 * 3, y=400, target=self.select_level_3,
-                                                               width=100, height=100, text='Level 13',
+                                                               width=100, height=100, text='Pokój 13',
                                                                font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_4 = grarantanna_button.Button(x=self.WIDTH // 6 * 4, y=400, target=self.select_level_4,
-                                                               width=100, height=100, text='Level 14',
+                                                               width=100, height=100, text='Pokój 14',
                                                                font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
         self.button_select_level_5 = grarantanna_button.Button(x=self.WIDTH // 6 * 5, y=400, target=self.select_level_5,
-                                                               width=100, height=100, text='Level 15',
+                                                               width=100, height=100, text='Pokój 15',
                                                                font_grow_ratio=1,
                                                                bg_color=self.bg_color, folder_index=2)
 
@@ -406,15 +427,23 @@ class Settings(game_class.Game):
         super().__init__(width, height, fps)
         self.game = game
         self.bg_color = basic_globals.BG_COLOR
+        self.font_name = 'resources/Born2bSportyV2.ttf'
+        self.font_size = 60
+        self.font_color = (227, 197, 56)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('ustawienia', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=self.WIDTH // 2 - rendered.get_width() // 2, y=200, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
 
         self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=650, target=self.back_to_menu,
-                                                             width=360, height=60, text='back to menu',
+                                                             width=360, height=60, text='powrót do menu',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.add_updatable(self.button_back_to_menu)
 
-        self.volume_slider = grarantanna_slider.Slider(x=self.WIDTH // 2, y=350, text='glosnoc')
+        self.volume_slider = grarantanna_slider.Slider(x=self.WIDTH // 2, y=350, text='Głośność')
         self.add_updatable(self.volume_slider)
 
     def back_to_menu(self):
@@ -426,15 +455,23 @@ class Settings_in_game(game_class.Game):
         super().__init__(width, height, fps)
         self.game = game
         self.bg_color = basic_globals.BG_COLOR
+        self.font_name = 'resources/Born2bSportyV2.ttf'
+        self.font_size = 60
+        self.font_color = (227, 197, 56)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('ustawienia', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=self.WIDTH // 2 - rendered.get_width() // 2, y=200, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
 
         self.button_back_to_game = grarantanna_button.Button(x=self.WIDTH // 2, y=650, target=self.back_to_game,
-                                                             width=360, height=60, text='back to game',
+                                                             width=360, height=60, text='powrót do gry',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.add_updatable(self.button_back_to_game)
 
-        self.volume_slider = grarantanna_slider.Slider(x=self.WIDTH // 2, y=350, text='glosnoc')
+        self.volume_slider = grarantanna_slider.Slider(x=self.WIDTH // 2, y=350, text='Głośność')
         self.add_updatable(self.volume_slider)
 
     def back_to_game(self):
@@ -448,16 +485,16 @@ class Stop(game_class.Game):
         self.bg_color = basic_globals.BG_COLOR
 
         self.button_back_to_game = grarantanna_button.Button(x=self.WIDTH // 2, y=250, target=self.back_to_game,
-                                                             width=360, height=60, text='back to game',
+                                                             width=360, height=60, text='powrót do gry',
                                                              font_grow_ratio=1.2,
                                                              bg_color=self.bg_color, folder_index=1)
         self.button_reset_level = grarantanna_button.Button(x=self.WIDTH // 2, y=250 + 75, target=self.reset_level,
-                                                            width=360, height=60, text='reset level',
+                                                            width=360, height=60, text='resetart pokoju',
                                                             font_grow_ratio=1.2,
                                                             bg_color=self.bg_color, folder_index=1)
         self.button_settings_in_game = grarantanna_button.Button(x=self.WIDTH // 2, y=250 + 75 * 2,
                                                                  target=self.settings_in_game,
-                                                                 width=360, height=60, text='settings',
+                                                                 width=360, height=60, text='ustawienia',
                                                                  font_grow_ratio=1.2,
                                                                  bg_color=self.bg_color, folder_index=1)
         self.button_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=250 + 75 * 4, target=self.menu,

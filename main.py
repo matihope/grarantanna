@@ -32,6 +32,7 @@ def main():
             screen = level_select1.get_surface()
         elif game.show_screen == 3:  # Settings
             settings.update(clock.tick(game.FPS))
+            settings.volume_slider.value = game.volume
             settings.draw()
             screen = settings.get_surface()
         elif game.show_screen == 4:  # Stop
@@ -40,6 +41,7 @@ def main():
             screen = stop.get_surface()
         elif game.show_screen == 5:  # Setings in game
             settings_in_game.update(clock.tick(game.FPS))
+            settings_in_game.volume_slider.value = game.volume
             settings_in_game.draw()
             screen = settings_in_game.get_surface()
         elif game.show_screen == 6:  # Select level 2

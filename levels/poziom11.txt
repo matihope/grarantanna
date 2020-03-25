@@ -2,7 +2,7 @@
 #Update:2020-03-25 12:51:58
 create_area:30,20
 background_image:-1
-tile:elementy1.png,3,1120.0,640.0,40,40,0,ginie_lewo
+tile:elementy1.png,3,1120.0,640.0,40,40,0,zabija_lewo
 tile:elementy1.png,5,0.0,760.0,40,40,0,kwadrat
 tile:elementy1.png,5,0.0,720.0,40,40,0,kwadrat
 tile:elementy1.png,5,0.0,680.0,40,40,0,kwadrat

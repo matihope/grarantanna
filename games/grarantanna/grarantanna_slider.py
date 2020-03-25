@@ -7,6 +7,7 @@ import os
 
 from games.grarantanna import grarantanna_button
 
+
 class Slider(basic_classes.UpdatableObj):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -15,6 +16,7 @@ class Slider(basic_classes.UpdatableObj):
         self.height = kwargs.get('height', 140)
         self.x = kwargs.get('x', 100)
         self.y = kwargs.get('y', 100)
+        self.clicked = False
 
         self.value = kwargs.get('value', 10)
         self.value_max = kwargs.get('value_max', 50)
@@ -22,7 +24,7 @@ class Slider(basic_classes.UpdatableObj):
 
         self.target = kwargs.get('target', None)
         self.bg_color = kwargs.get('bg_color', (50, 50, 50))
-        self.font_name = kwargs.get('font_name', '')
+        self.font_name = kwargs.get('font_name', 'resources/Born2bSportyV2.ttf')
         self.font_size = kwargs.get('font_size', 40)
         self.font_color = kwargs.get('font_color', (227, 197, 56))
         self.font_grow_ratio = kwargs.get('font_grow_ratio', 1.2)
@@ -43,21 +45,20 @@ class Slider(basic_classes.UpdatableObj):
         self.s2.blit(img, (0, 0))
 
         self.pressed = True
-        
 
     def draw(self, surface):
         self.s1.blit(self.img1, (0, 45))
         self.s1.blit(self.s2,(self.s2_x, self.s2_y))
 
-        font = pygame.font.SysFont(self.font_name, self.font_size)
+        font = pygame.font.Font(self.font_name, self.font_size)
         rendered = font.render(self.text , True, self.font_color)
         pos = self.width//2 - rendered.get_width()//2, 0
         self.s1.blit(rendered, pos)
     
         s34 = pygame.Surface((self.width, 40))
         s34.fill(self.bg_color)
-        font = pygame.font.SysFont(self.font_name, self.font_size)
-        rendered = font.render(str(self.value) , True, self.font_color)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render(str(round(self.value)), True, self.font_color)
         pos = self.width//2 - rendered.get_width()//2, 100
         self.s1.blit(s34, (0, 100))
         self.s1.blit(rendered, pos)
@@ -77,12 +78,18 @@ class Slider(basic_classes.UpdatableObj):
             self.pressed = False
 
         if self.pressed:
-            if gmf.point_in_rectangle(mouse_x, mouse_y, self.x + self.s2_x - self.width//2, self.y + self.s2_y, self.s2_width, self.s2_height) :
-                self.value = (mouse_x - self.x + self.width//2) / self.width * self.value_max
-                self.value = round(self.value)
+            if gmf.point_in_rectangle(mouse_x, mouse_y, self.x + self.s2_x - self.width//2, self.y + self.s2_y, self.s2_width, self.s2_height):
+                self.clicked = True
 
-            if mouse_y > self.y + self.s2_y and mouse_y < self.y + self.s2_y + self.s2_height:
+            if self.clicked:
+                self.value = (mouse_x - self.x + self.width//2) / self.width * self.value_max
+
                 if (mouse_x - self.x + self.width//2) > self.width:
                     self.value = self.value_max
                 if (mouse_x - self.x + self.width//2) < 0:
                     self.value = 0
+
+                self.parent.game.set_volume(round(self.value))
+                self.parent.game.channel.play(self.parent.game.sound_przyciski_menu)
+        else:
+            self.clicked = False

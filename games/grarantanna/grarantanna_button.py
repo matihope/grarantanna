@@ -58,6 +58,7 @@ class Button(basic_classes.UpdatableObj):
                 self.sprite_index = 2
                 self.pressed = True
             if self.pressed_before and not self.pressed:
+                self.parent.game.channel.play(self.parent.game.sound_przyciski_menu)
                 self.target()
 
     def draw(self, surface):

@@ -51,6 +51,7 @@ class Gun(basic_classes.UpdatableObj):
             self.remove_portal_from_blocks(color=portal_color)
             self.bullet = grarantanna_bullet.Bullet(direction=d, speed=15, x=x, y=y-3, portal_color=portal_color)
             self.parent.add_updatable(self.bullet, draw_order=2)
+            self.parent.channel.play(self.parent.sound_strzal)
         self.mouse_pressed_before = mouse_press[0] or mouse_press[2]
 
         if self.owner.drawing_death_animation:

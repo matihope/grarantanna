@@ -56,6 +56,7 @@ class Block(basic_classes.UpdatableObj):
 
     def letter_collect(self):
         self.rem()
+        self.parent.channel.play(self.parent.sound_zdobycie_punktu)
         print('Player collected letter')
 
     def rem(self, delay=0):
@@ -138,6 +139,7 @@ class Block(basic_classes.UpdatableObj):
                 if place_meeting(self.x, self.y - 1, block, self):
                     if block.tag == 'player' and not block.drawing_death_animation:
                         self.rem(100)
+                        self.parent.channel.play(self.parent.sound_zabicie_traktora)
                         self.spd = 0
                     if block.tag == 'tp':
                         if place_meeting(self.x+self.size, self.y - 1, block, self) and \

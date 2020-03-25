@@ -87,6 +87,7 @@ class Player(basic_classes.UpdatableObj):
             self.is_flying = False
             self.on_ground = False
             self.on_boost = False
+            self.parent.channel.play(self.parent.sound_skok)
 
         if self.vsp < -15:
             self.vsp = -15
@@ -266,14 +267,13 @@ class Player(basic_classes.UpdatableObj):
         self.x += hsp
         self.y += vsp
 
-        print(self.collected_strings)
-
         # If on the edge of the screen
         if not 0 <= self.x <= self.parent.WIDTH or \
                 not 0 <= self.y <= self.parent.HEIGHT:
             self.lose_hp()
 
     def tp_self(self, block, block_original, current):
+        self.parent.channel.play(self.parent.sound_teleport)
         dest = 'right'
 
         sides = ['right', 'left', 'bottom', 'top']
@@ -318,6 +318,8 @@ class Player(basic_classes.UpdatableObj):
         self.gun.y = self.y + self.gun.size//2
 
         self.spd = abs(self.spd)
+        self.collected_strings = []
+        self.collected_strings_string = ''
         self.on_boost = False
         self.on_ground = False
         self.drawing_death_animation = False
@@ -326,3 +328,4 @@ class Player(basic_classes.UpdatableObj):
         # What happens when dies
         self.vsp = -7
         self.drawing_death_animation = True
+        self.parent.channel.play(self.parent.sound_smierc)
