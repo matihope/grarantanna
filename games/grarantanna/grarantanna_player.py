@@ -39,8 +39,8 @@ class Player(basic_classes.UpdatableObj):
         self.teleport_up_speed = -5
         self.moving_from_prev = 1
 
-        self.to_collect = []
-        self.to_collect_string = ''
+        self.collected_strings = []
+        self.collected_strings_string = ''
         self.collect_indicator_offset_x = 25
 
         self.gun = grarantanna_gun.Gun(owner=self, x=self.x+3, y=self.y+3)
@@ -99,31 +99,32 @@ class Player(basic_classes.UpdatableObj):
 
         # Collision handling
         for block in self.parent.game_tiles:
-            if block.tag == 'start' or block.tag == 'czesc':
+            if block.tag == 'start':
                 continue
 
             if self.vsp == 0 and self.hsp == 0:
                 break
 
             else:  # For every other block
-                if place_meeting(self.x + hsp, self.y, block, self):
-                    while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
-                        self.x += sign(self.hsp)
-                        if not 0 <= self.x <= self.parent.WIDTH:
-                            break
-                    self.is_flying = False
-                    self.hsp = 0
-                    hsp = 0
+                if block.tag != 'czesc':
+                    if place_meeting(self.x + hsp, self.y, block, self):
+                        while not place_meeting(self.x + sign(self.hsp), self.y, block, self):
+                            self.x += sign(self.hsp)
+                            if not 0 <= self.x <= self.parent.WIDTH:
+                                break
+                        self.is_flying = False
+                        self.hsp = 0
+                        hsp = 0
 
-                if place_meeting(self.x, self.y + vsp, block, self):
-                    while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
-                        self.y += sign(self.vsp)
-                        if not 0 <= self.y <= self.parent.HEIGHT:
-                            break
+                    if place_meeting(self.x, self.y + vsp, block, self):
+                        while not place_meeting(self.x, self.y + sign(self.vsp), block, self):
+                            self.y += sign(self.vsp)
+                            if not 0 <= self.y <= self.parent.HEIGHT:
+                                break
 
-                    self.vsp = 0
-                    vsp = 0
-                    self.is_kicked_sideways = False
+                        self.vsp = 0
+                        vsp = 0
+                        self.is_kicked_sideways = False
 
                 # Test for the right side of the player
                 if place_meeting(self.x + 1, self.y, block, self):
@@ -149,8 +150,9 @@ class Player(basic_classes.UpdatableObj):
                                     self.tp_self(b, block, 'left')
 
                     if block.tag == 'czesc':
-                        self.to_collect.remove(block)
+                        self.collected_strings.append(block.text)
                         block.letter_collect()
+                        continue
 
                 # Test for the left side of the player
                 if place_meeting(self.x - 1, self.y, block, self):
@@ -175,6 +177,11 @@ class Player(basic_classes.UpdatableObj):
                                     self.teleporting_prev = True
                                     self.tp_self(b, block, 'right')
 
+                    if block.tag == 'czesc':
+                        self.collected_strings.append(block.text)
+                        block.letter_collect()
+                        continue
+
                 # Test for player's head
                 if place_meeting(self.x, self.y - 1, block, self):
                     if block.tag == 'magnes_dol' or block.tag == 'magnes_wszystko':
@@ -192,6 +199,11 @@ class Player(basic_classes.UpdatableObj):
                                 if b is not None and not self.teleporting_prev:
                                     self.teleporting_prev = True
                                     self.tp_self(b, block, 'bottom')
+
+                    if block.tag == 'czesc':
+                        self.collected_strings.append(block.text)
+                        block.letter_collect()
+                        continue
 
                 # Test for player's feet
                 if place_meeting(self.x, self.y + 1, block, self):
@@ -240,6 +252,11 @@ class Player(basic_classes.UpdatableObj):
                                     self.teleporting_prev = True
                                     self.tp_self(b, block, 'top')
 
+                        if block.tag == 'czesc':
+                            self.collected_strings.append(block.text)
+                            block.letter_collect()
+                            continue
+
         if self.vsp > 0:
             # Falling
             self.on_ground = False
@@ -248,17 +265,12 @@ class Player(basic_classes.UpdatableObj):
         self.x += hsp
         self.y += vsp
 
+        print(self.collected_strings)
+
         # If on the edge of the screen
         if not 0 <= self.x <= self.parent.WIDTH or \
                 not 0 <= self.y <= self.parent.HEIGHT:
             self.lose_hp()
-
-        self.to_collect_string
-        collected_string = ''
-        self.to_collect
-        # x = [part for part in ''.join([xx.text for xx in self.to_collect]) if part in self.to_collect_string.replace(' ', '')]
-        x =
-        print(x)
 
     def tp_self(self, block, block_original, current):
         dest = 'right'
@@ -300,22 +312,6 @@ class Player(basic_classes.UpdatableObj):
         self.y = self.start_y
         self.vsp = 0
         self.hsp = 0
-
-        # has_ground = False
-        # while not has_ground:
-        #     self.y += 1
-        #     for block in self.parent.game_tiles:
-        #         if block.tag == 'start' or block.tag == 'czesc':
-        #             continue
-        #
-        #         else:  # For every other block
-        #             if place_meeting(self.x, self.y + 10, block, self):
-        #                 while not place_meeting(self.x, self.y + 1, block, self):
-        #                     self.y += 1
-        #                     has_ground = True
-        #                     if not 0 <= self.y <= self.parent.HEIGHT:
-        #                         break
-        #                 self.vsp = 0
 
         self.gun.x = self.x + self.gun.size//2
         self.gun.y = self.y + self.gun.size//2

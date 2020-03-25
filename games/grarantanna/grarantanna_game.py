@@ -116,7 +116,6 @@ class Grarantanna(game_class.Game):
             for i in range(len(text)):
                 tiles_czesc[i].sprite_index = 0
                 tiles_czesc[i].text = text[i]
-            self.player.to_collect = tiles_czesc
             self.player.to_collect_string = przyslowie
             return text
         except Exception as e:
