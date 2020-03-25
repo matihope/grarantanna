@@ -60,5 +60,5 @@ tile:elementy.png,3,960.0,200.0,40,40,0,magnes_dol
 tile:elementy.png,3,920.0,200.0,40,40,0,magnes_dol
 tile:elementy.png,3,880.0,200.0,40,40,0,magnes_dol
 tile:elementy.png,3,840.0,200.0,40,40,0,magnes_dol
-tile:elementy.png,12,1040.0,80.0,40,40,0,trojkat
+tile:elementy.png,12,1040.0,80.0,40,40,0,trojkat_gora
 tile:elementy.png,1,1040.0,120.0,40,40,0,start

@@ -274,10 +274,7 @@ class Player(basic_classes.UpdatableObj):
             self.y = block.y + block.height + 5
 
         self.moving_from_prev = 1
-        if side == 'left' and dest == 'left':
-            self.moving_from_prev = -1
-
-        if side == 'right' and dest == 'right':
+        if (side == 'left' and dest == 'left') or (side == 'right' and dest == 'right'):
             self.moving_from_prev = -1
 
         self.gun.x = self.x + self.gun.size//2

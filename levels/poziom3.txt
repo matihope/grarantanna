@@ -1,5 +1,5 @@
 #TILES_DATA
-#Update:2020-03-24 16:08:55
+#Update:2020-03-24 16:16:13
 create_area:30,20
 background_image:-1
 tile:elementy1.png,5,80.0,680.0,40,40,0,kwadrat
@@ -59,7 +59,6 @@ tile:elementy1.png,5,1080.0,680.0,40,40,0,kwadrat
 tile:elementy1.png,15,1040.0,160.0,40,40,0,start
 tile:elementy1.png,5,960.0,160.0,40,40,0,kwadrat
 tile:elementy1.png,22,880.0,200.0,40,40,0,znikajacy_kwadrat
-tile:elementy1.png,21,800.0,240.0,40,40,0,zamiana
 tile:elementy1.png,22,720.0,280.0,40,40,0,znikajacy_kwadrat
 tile:elementy1.png,4,920.0,160.0,40,40,0,kolce
 tile:elementy1.png,4,880.0,160.0,40,40,0,kolce
@@ -73,8 +72,6 @@ tile:elementy1.png,17,680.0,360.0,40,40,0,wagon
 tile:elementy1.png,18,1000.0,360.0,40,40,0,trojkat_gora
 tile:elementy1.png,19,1040.0,520.0,40,40,0,trojkat_lewo
 tile:elementy1.png,6,920.0,480.0,40,40,0,leci_lewo
-tile:elementy1.png,5,520.0,400.0,40,40,0,kwadrat
-tile:elementy1.png,5,520.0,360.0,40,40,0,kwadrat
 tile:elementy1.png,8,480.0,160.0,40,40,0,magnes_gora
 tile:elementy1.png,8,440.0,160.0,40,40,0,magnes_gora
 tile:elementy1.png,8,400.0,160.0,40,40,0,magnes_gora
@@ -99,17 +96,11 @@ tile:elementy1.png,16,440.0,320.0,40,40,0,tajne_przejscie
 tile:elementy1.png,16,440.0,280.0,40,40,0,tajne_przejscie
 tile:elementy1.png,4,440.0,440.0,40,40,0,kolce
 tile:elementy1.png,4,520.0,440.0,40,40,0,kolce
-tile:elementy1.png,21,200.0,400.0,40,40,0,zamiana
 tile:elementy1.png,18,120.0,400.0,40,40,0,trojkat_gora
 tile:elementy1.png,4,680.0,160.0,40,40,0,kolce
 tile:elementy1.png,4,640.0,160.0,40,40,0,kolce
 tile:elementy1.png,4,600.0,160.0,40,40,0,kolce
 tile:elementy1.png,4,560.0,160.0,40,40,0,kolce
-tile:elementy1.png,16,520.0,320.0,40,40,0,tajne_przejscie
-tile:elementy1.png,16,520.0,280.0,40,40,0,tajne_przejscie
-tile:elementy1.png,16,520.0,240.0,40,40,0,tajne_przejscie
-tile:elementy1.png,16,520.0,200.0,40,40,0,tajne_przejscie
-tile:elementy1.png,16,520.0,160.0,40,40,0,tajne_przejscie
 tile:elementy1.png,1,960.0,200.0,40,40,0,czesc
 tile:elementy1.png,1,880.0,240.0,40,40,0,czesc
 tile:elementy1.png,1,800.0,280.0,40,40,0,czesc
@@ -151,3 +142,12 @@ tile:elementy1.png,4,880.0,520.0,40,40,0,kolce
 tile:elementy1.png,4,1040.0,360.0,40,40,0,kolce
 tile:elementy1.png,5,960.0,440.0,40,40,0,kwadrat
 tile:elementy1.png,18,680.0,280.0,40,40,0,trojkat_gora
+tile:elementy1.png,16,520.0,160.0,40,40,0,czesc
+tile:elementy1.png,16,520.0,200.0,40,40,0,czesc
+tile:elementy1.png,16,520.0,240.0,40,40,0,czesc
+tile:elementy1.png,16,520.0,280.0,40,40,0,czesc
+tile:elementy1.png,16,520.0,320.0,40,40,0,czesc
+tile:elementy1.png,16,520.0,360.0,40,40,0,czesc
+tile:elementy1.png,16,520.0,400.0,40,40,0,czesc
+tile:elementy1.png,22,800.0,240.0,40,40,0,znikajacy_kwadrat
+tile:elementy1.png,22,200.0,400.0,40,40,0,znikajacy_kwadrat

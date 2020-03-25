@@ -223,7 +223,7 @@ class Settings(game_class.Game):
                                                              bg_color=self.bg_color, folder_index=1)
 
         self.add_updatable(self.button_back_to_menu)
-        
+
         self.volume_slider = grarantanna_slider.Slider(x=self.WIDTH // 2, y=350, text='glosnoc')
         self.add_updatable(self.volume_slider)
 

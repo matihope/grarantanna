@@ -1,5 +1,5 @@
 #TILES_DATA
-#Update:2020-03-25 11:44:55
+#Update:2020-03-25 11:46:58
 create_area:30,20
 background_image:-1
 tile:elementy1.png,5,40.0,40.0,40,40,0,kwadrat
@@ -177,3 +177,4 @@ tile:elementy1.png,1,320.0,240.0,40,40,0,czesc
 tile:elementy1.png,1,320.0,80.0,40,40,0,czesc
 tile:elementy1.png,1,640.0,80.0,40,40,0,czesc
 tile:elementy1.png,1,960.0,80.0,40,40,0,czesc
+tile:elementy1.png,15,1080.0,80.0,40,40,0,start
