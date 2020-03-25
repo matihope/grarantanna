@@ -1,5 +1,5 @@
 import pygame
-import textwrap
+import math
 from modules import \
     basic_classes, \
     basic_globals, \
@@ -37,14 +37,14 @@ class Grarantanna(game_class.Game):
         self.game_tiles = []
         self.player = None
 
-        # self.sound_przyciski_menu = pygame.mixer.Sound('')
-        # self.sound_tp_strzal = pygame.mixer.Sound('')
-        # self.sound_teleport = pygame.mixer.Sound('')
-        # self.sound_ruszanie = pygame.mixer.Sound('')
-        # self.sound_skok = pygame.mixer.Sound('')
-        # self.sound_smierc = pygame.mixer.Sound('')
+        # self.sound_przyciski_menu = pygame.mixer.Sound('resources/wybor_w_menu.wav')
+        # self.sound_strzal = pygame.mixer.Sound('resources/strzal')
+        # self.sound_teleport = pygame.mixer.Sound('resources/teleportacja.wav')
+        # self.sound_ruszanie = pygame.mixer.Sound('resources/')
+        # self.sound_skok = pygame.mixer.Sound('resources/skok.wav')
+        # self.sound_smierc = pygame.mixer.Sound('resources/smierc.wav')
         # self.sound_zabicie_traktora = pygame.mixer.Sound('')
-        # self.sound_zdobycie_punktu = pygame.mixer.Sound('')
+        # self.sound_zdobycie_punktu = pygame.mixer.Sound('zdobycie_punktu.wav')
 
     def fix_kolce(self, tile):
         sprite = tile.sprites[tile.sprite_index]
@@ -71,7 +71,7 @@ class Grarantanna(game_class.Game):
             else:
                 self.add_updatable(tile, draw_order=4)
 
-        self.generate_texts(tiles_czesc, self.przyslowia[int(self.level_name[6:])])
+        self.generate_texts(tiles_czesc, self.przyslowia[int(self.level_name[6:])-1])
 
     def load_level(self, name):
         if self.player is not None:
@@ -98,7 +98,7 @@ class Grarantanna(game_class.Game):
                     self.add_updatable(tile, draw_order=4)
 
         self.load_player(player_x, player_y)
-        self.generate_texts(tiles_czesc, self.przyslowia[int(name[6:])])
+        self.generate_texts(tiles_czesc, self.przyslowia[int(name[6:])-1])
 
         self.level_name = name
 
@@ -110,14 +110,19 @@ class Grarantanna(game_class.Game):
 
     def generate_texts(self, tiles_czesc, przyslowie):
         try:
-            ln = len(przyslowie)//len(tiles_czesc)
-            text = textwrap.wrap(przyslowie, ln)
-            print(len(tiles_czesc), len(text))
-            for i in range(len(text)):
-                tiles_czesc[i].sprite_index = 0
-                tiles_czesc[i].text = text[i]
             self.player.to_collect_string = przyslowie
-            return text
+            n = int(len(przyslowie)/len(tiles_czesc))
+            text = [przyslowie[i:i + n] for i in range(0, len(przyslowie), n)]
+            for i in range(len(tiles_czesc)):
+                i %= len(text)-1
+                tiles_czesc[i].sprite_index = 0
+                tiles_czesc[i].text += text[i]
+                print(tiles_czesc[i].text)
+
+            full_by_now = ''.join(text)
+            second_part_przyslowie = przyslowie[len(full_by_now)-1:]
+            tiles_czesc[-1].text += second_part_przyslowie
+
         except Exception as e:
             print(e)
 
