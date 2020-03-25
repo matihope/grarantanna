@@ -17,7 +17,6 @@ class Grarantanna(game_class.Game):
 
         self.game_tiles = []
         self.player = None
-        self.load_level('poziom1')
 
     def fix_kolce(self, tile):
         sprite = tile.sprites[tile.sprite_index]
