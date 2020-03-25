@@ -2,7 +2,7 @@ import pygame
 from games.grarantanna import grarantanna_game
 
 WIDTH, HEIGHT = 1200, 800
-win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.HWSURFACE | pygame.DOUBLEBUF)
+win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Grarantanna v0.4')
 
 

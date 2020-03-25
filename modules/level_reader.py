@@ -5,7 +5,7 @@ from modules import basic_globals, block
 
 def flip(tile, board_w, board_h):
     y = (board_h * tile.height) - tile.y
-    tile.y = y
+    tile.y = y - 40
 
 
 def decode(lines):

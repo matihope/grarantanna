@@ -38,7 +38,7 @@ class Player(basic_classes.UpdatableObj):
         self.teleporting_prev = False
         self.teleport_up_speed = -5
 
-        self.gun = grarantanna_gun.Gun(owner=self, x=self.x, y=self.y)
+        self.gun = grarantanna_gun.Gun(owner=self, x=self.x+3, y=self.y+3)
         
     def update(self, keys):
         super().update(keys)
@@ -255,48 +255,7 @@ class Player(basic_classes.UpdatableObj):
                 dest = side
                 break
 
-        if current == 'right':
-            if dest == 'right':
-                self.hsp = -self.hsp
-                self.vsp = self.vsp
-            elif dest == 'top':
-                self.vsp = self.hsp
-                self.hsp = min(self.vsp, self.teleport_up_speed)
-            elif dest == 'bottom':
-                self.vsp = -self.hsp
-                self.hsp = -self.vsp
-        elif current == 'left':
-            if dest == 'left':
-                self.hsp = -self.hsp
-                self.vsp = self.vsp
-            elif dest == 'top':
-                self.hsp = -self.vsp
-                self.vsp = min(-self.hsp, self.teleport_up_speed)
-            elif dest == 'bottom':
-                self.hsp = -self.vsp
-                self.vsp = self.hsp
-        elif current == 'top':
-            if dest == 'top':
-                self.hsp = self.hsp
-                self.vsp = min(-self.vsp, self.teleport_up_speed)
-            elif dest == 'right':
-                self.hsp = self.vsp
-                self.vsp = -self.hsp
-            elif dest == 'left':
-                self.hsp = -self.vsp
-                self.vsp = self.vsp
-        elif current == 'bottom':
-            if dest == 'top':
-                self.vsp = min(self.vsp, self.teleport_up_speed)
-            if dest == 'bottom':
-                self.hsp = self.hsp
-                self.vsp = -self.vsp
-            elif dest == 'right':
-                self.hsp = -self.vsp
-                self.vsp = self.hsp
-            elif dest == 'left':
-                self.hsp = self.vsp
-                self.vsp = -self.hsp
+        self.vsp = min(self.vsp, self.teleport_up_speed)
 
         if dest == 'right':
             self.x = block.x + block.width + 3
