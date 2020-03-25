@@ -60,17 +60,21 @@ class Gun(basic_classes.UpdatableObj):
         for block in self.parent.game_tiles:
             if self.hsp == 0 and self.vsp == 0:
                 break
-            if block.tag == 'start'or block.tag == 'czesc':
+            if block.tag == 'start' or block.tag == 'czesc':
                 continue
 
             if place_meeting(self.x + self.hsp, self.y, block, self):
                 while not place_meeting(self.x + sign(self.hsp)/10, self.y, block, self):
                     self.x += sign(self.hsp)/10
+                    if not 0 <= self.x <= self.parent.WIDTH:
+                        break
                 self.hsp = 0
 
             if place_meeting(self.x, self.y + self.vsp, block, self):
                 while not place_meeting(self.x, self.y + sign(self.vsp)/10, block, self):
                     self.y += sign(self.vsp)/10
+                    if not 0 <= self.y <= self.parent.HEIGHT:
+                        break
                 self.vsp = 0
 
         self.x += self.hsp

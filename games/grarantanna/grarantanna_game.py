@@ -54,7 +54,8 @@ class Grarantanna(game_class.Game):
         player_y = 0
         for tile in self.game_tiles:
             if tile.tag == 'start':
-                player_x, player_y = tile.x + 5, tile.y + 5
+                # self.add_updatable(tile)
+                player_x, player_y = tile.x + 10, tile.y
             else:
                 if tile.tag == 'kolce':
                     self.fix_kolce(tile)

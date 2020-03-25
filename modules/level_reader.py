@@ -15,7 +15,7 @@ def decode(lines):
     board_h = int(board_h)
     for line in lines:
         if line[:5] == 'tile:':
-            line = line[5:-1]  # Strip from \n and tile:
+            line = line[5:].replace('\n', '')  # Strip from '\n' and 'tile:'
             vals = line.split(',')
 
             size = int(vals[4])

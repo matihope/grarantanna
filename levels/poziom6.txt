@@ -1,0 +1,26 @@
+#TILES_DATA
+#Update:2020-03-24 22:17:02
+create_area:30,20
+background_image:-1
+tile:elementy1.png,5,600.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,240.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,280.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,320.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,360.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,400.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,440.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,480.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,520.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,560.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,600.0,80.0,40,40,0,kwadrat
+tile:elementy1.png,5,640.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,680.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,720.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,760.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,800.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,840.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,880.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,5,920.0,40.0,40,40,0,kwadrat
+tile:elementy1.png,15,600.0,200.0,40,40,0,start
+tile:elementy1.png,13,680.0,120.0,40,40,0,tp
+tile:elementy1.png,13,1040.0,240.0,40,40,0,tp

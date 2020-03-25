@@ -54,12 +54,17 @@ class Game:
 
     def remove_obj(self, obj):
         """ Remove object from the registries """
+        removed_from_draw = False
+        removed_from_update = False
         for i in range(len(self.draw_regs)):
             if obj in self.draw_regs[i]:
                 self.draw_regs[i].remove(obj)
+                removed_from_draw = True
         for i in range(len(self.update_regs)):
             if obj in self.update_regs[i]:
                 self.update_regs[i].remove(obj)
+                removed_from_update = True
+        return removed_from_draw, removed_from_update
 
     def get_surface(self):
         return self.__surface

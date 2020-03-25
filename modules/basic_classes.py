@@ -44,6 +44,8 @@ class UpdatableObj(DrawableObj):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._reg.append(self)
+        self.start_x = self.x
+        self.start_y = self.y
         self.active = True
 
     def update(self, keys):
