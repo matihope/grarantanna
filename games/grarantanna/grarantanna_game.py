@@ -1,10 +1,8 @@
 import pygame
-import copy
 from modules import \
     basic_classes, \
     basic_globals, \
     game_class, \
-    gamemaker_functions as gmf, \
     level_reader, block
 import os
 
@@ -27,21 +25,21 @@ class Grarantanna(game_class.Game):
             'KRADZIONE NIE TUCZY',  # Poziom 3
             'KTO PYTA, NIE BŁĄDZI',  # Poziom 4
             'KUĆ ŻELAZO, PUKI GORĄCE',  # Poziom 5
-            'Testujemy poz 6',  # Poziom 6
-            'Testujemy poz 7',  # Poziom 7
+            'Testujemy Poziom 6',  # Poziom 6
+            'Testujemy Poziom 7',  # Poziom 7
             'BEZ PRACY NIE MA KOŁACZY',  # Poziom 8
-            'DAROWANEMU KONIOWI W ZĘBY SIĘ NIE ZAGLĄDA',  # Poziom 9
+            'APETYT ROŚNIE W MIARĘ JEDZENIA',  # Poziom 9
             'NIE CHWAL DNIA PRZED ZACHODEM SŁOŃCA',  # Poziom 10
             'FORTUNA KOŁEM SIĘ TOCZY',  # Poziom 11
-            'APETYT ROŚNIE W MIARĘ JEDZENIA',  # Poziom 12
+            'DAROWANEMU KONIOWI W ZĘBY SIĘ NIE ZAGLĄDA',  # Poziom 12
             'Testujemy Poziom 13',  # Poziom 13
-            'DZIECI I RYBY GŁOSU NIE MAJĄ',  # Poziom 14
+            'Testujemy Poziom 14',  # Poziom 14
             'Testujemy Poziom 15',  # Poziom 15
             'CO MA WISIEĆ, NIE UTONIE',  # Poziom 16
             'LEPSZY WRÓBEL W GARŚCI NIŻ GOŁĄB NA DACHU',  # Poziom 17
-            'Testujemy poz 18',  # Poziom 18
+            'Testujemy Poziom 18',  # Poziom 18
             'DZIECI I RYBY GŁOSU NIE MAJĄ',  # Poziom 19
-            'Testujemy poz 20'  # Poziom 20
+            'Testujemy Poziom 20'  # Poziom 20
             ]
 
         self.game_tiles = []
@@ -138,6 +136,8 @@ class Grarantanna(game_class.Game):
         level_index = int(self.level_name[6:])
         self.finished_levels.append(level_index)
         self.load_level('poziom' + str(level_index + 1))
+        if level_index == 20:
+            self.show_screen = 0
 
 
 class Menu(game_class.Game):
