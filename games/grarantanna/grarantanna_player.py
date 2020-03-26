@@ -56,11 +56,6 @@ class Player(basic_classes.UpdatableObj):
         self.teleporting_prev = self.teleporting
         self.teleporting = False
 
-        # Delete that
-        if keys[pygame.K_t]:
-            self.x, self.y = self.parent.mouse.get_pos()
-            self.hsp, self.vsp = 0, 0
-
         # If player died
         if self.drawing_death_animation:
             self.vsp += self.grv
