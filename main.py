@@ -3,7 +3,7 @@ from games.grarantanna import grarantanna_game
 
 WIDTH, HEIGHT = 1200, 800
 win = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Grarantanna v0.9')
+pygame.display.set_caption('Grarantanna v1.0')
 pygame.display.set_icon(pygame.image.load('resources/ikonka.png'))
 
 
@@ -17,6 +17,7 @@ def main():
     level_select2 = grarantanna_game.LevelSelect2(width=WIDTH, height=HEIGHT, game=game)
     level_select3 = grarantanna_game.LevelSelect3(width=WIDTH, height=HEIGHT, game=game)
     level_select0 = grarantanna_game.LevelSelect0(width=WIDTH, height=HEIGHT, game=game)
+    jak_grac = grarantanna_game.Jak_grac(width=WIDTH, height=HEIGHT, game=game)
 
     clock = pygame.time.Clock()
     while game.run:
@@ -58,6 +59,10 @@ def main():
             level_select0.update(clock.tick(game.FPS))
             level_select0.draw()
             screen = level_select0.get_surface()
+        elif game.show_screen == 9:  # Select level 0
+            jak_grac.update(clock.tick(game.FPS))
+            jak_grac.draw()
+            screen = jak_grac.get_surface()
 
         win.blit(screen, (0, 0))
         pygame.display.flip()

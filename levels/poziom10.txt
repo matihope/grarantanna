@@ -1,5 +1,5 @@
 #TILES_DATA
-#Update:2020-03-25 22:15:43
+#Update:2020-03-26 01:31:01
 create_area:30,20
 background_image:-1
 tile:elementy1.png,5,400.0,640.0,40,40,0,kwadrat
@@ -91,9 +91,6 @@ tile:elementy1.png,5,480.0,160.0,40,40,0,kwadrat
 tile:elementy1.png,5,680.0,160.0,40,40,0,kwadrat
 tile:elementy1.png,5,760.0,160.0,40,40,0,kwadrat
 tile:elementy1.png,13,1040.0,240.0,40,40,0,tp
-tile:elementy1.png,13,200.0,160.0,40,40,0,tp
-tile:elementy1.png,13,720.0,680.0,40,40,0,tp
-tile:elementy1.png,1,960.0,160.0,40,40,0,czesc
 tile:elementy1.png,1,880.0,80.0,40,40,0,czesc
 tile:elementy1.png,1,800.0,80.0,40,40,0,czesc
 tile:elementy1.png,1,720.0,80.0,40,40,0,czesc
@@ -112,3 +109,7 @@ tile:elementy1.png,1,240.0,120.0,40,40,0,czesc
 tile:elementy1.png,1,920.0,120.0,40,40,0,czesc
 tile:elementy1.png,1,320.0,80.0,40,40,0,czesc
 tile:elementy1.png,1,840.0,80.0,40,40,0,czesc
+tile:elementy1.png,5,520.0,440.0,40,40,0,kwadrat
+tile:elementy1.png,5,480.0,360.0,40,40,0,kwadrat
+tile:elementy1.png,13,200.0,160.0,40,40,0,tp
+tile:elementy1.png,13,720.0,680.0,40,40,0,tp

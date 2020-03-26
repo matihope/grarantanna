@@ -15,32 +15,31 @@ class Grarantanna(game_class.Game):
         self.bg_color = basic_globals.BG_COLOR
         self.show_screen = 0
         self.level_name = ''
-        self.volume = 25
-
-        self.finished_levels = []
-
         self.przyslowia = [
-            'CO NAGLE, TO PO DIABLE',  # Poziom 1
-            'GDY KOTA NIE MA, MYSZY HARCUJĄ',  # Poziom 2
+            'KUĆ ŻELAZO, PUKI GORĄCE',  # Poziom 1
+            'CO NAGLE, TO PO DIABLE',  # Poziom 2
             'KRADZIONE NIE TUCZY',  # Poziom 3
             'KTO PYTA, NIE BŁĄDZI',  # Poziom 4
-            'KUĆ ŻELAZO, PUKI GORĄCE',  # Poziom 5
-            'Testujemy Poziom 6',  # Poziom 6
-            'Testujemy Poziom 7',  # Poziom 7
+            'GDY KOTA NIE MA, MYSZY HARCUJĄ',  # Poziom 5
+            'BYĆ PRACOWITYM JAK PSZCZOŁA',  # Poziom 6
+            'POLAK MĄDRY PO SZKODZIE',  # Poziom 7
             'BEZ PRACY NIE MA KOŁACZY',  # Poziom 8
             'APETYT ROŚNIE W MIARĘ JEDZENIA',  # Poziom 9
             'NIE CHWAL DNIA PRZED ZACHODEM SŁOŃCA',  # Poziom 10
             'FORTUNA KOŁEM SIĘ TOCZY',  # Poziom 11
             'DAROWANEMU KONIOWI W ZĘBY SIĘ NIE ZAGLĄDA',  # Poziom 12
-            'Testujemy Poziom 13',  # Poziom 13
-            'Testujemy Poziom 14',  # Poziom 14
-            'Testujemy Poziom 15',  # Poziom 15
+            'CZŁOWIEK CZŁOWIEKOWI WILKIEM',  # Poziom 13
+            'ELEKTRYKA PRĄD NIE TYKA',  # Poziom 14
+            'DZIECI I RYBY GŁOSU NIE MAJĄ',  # Poziom 15
             'CO MA WISIEĆ, NIE UTONIE',  # Poziom 16
             'LEPSZY WRÓBEL W GARŚCI NIŻ GOŁĄB NA DACHU',  # Poziom 17
-            'Testujemy Poziom 18',  # Poziom 18
-            'DZIECI I RYBY GŁOSU NIE MAJĄ',  # Poziom 19
-            'Testujemy Poziom 20'  # Poziom 20
+            'CO KRAJ TO OBYCZAJ',  # Poziom 18
+            'Z DUŻEJ CHMURY MAŁY DESZCZ',  # Poziom 19
+            'CZYJA ROLA, TEGO WOLA'  # Poziom 20
             ]
+        self.volume = 25
+
+        self.finished_levels = []
 
         self.game_tiles = []
         self.player = None
@@ -126,7 +125,6 @@ class Grarantanna(game_class.Game):
         for i in range(len(tiles_czesc)):
             tiles_czesc[i].sprite_index = 0
             tiles_czesc[i].text += text[i]
-            print(tiles_czesc[i].text)
 
     def set_volume(self, value):
         self.volume = value
@@ -135,9 +133,50 @@ class Grarantanna(game_class.Game):
     def next_level(self):
         level_index = int(self.level_name[6:])
         self.finished_levels.append(level_index)
-        self.load_level('poziom' + str(level_index + 1))
         if level_index == 20:
             self.show_screen = 0
+        else:
+            self.load_level('poziom' + str(level_index + 1))
+
+
+class Jak_grac(game_class.Game):
+    def __init__(self, game, width, height, fps=60):
+        super().__init__(width, height, fps)
+        self.game = game
+        self.bg_color = basic_globals.BG_COLOR
+        self.font_name = 'resources/Born2bSportyV2.ttf'
+        self.font_size = 70
+        self.font_color = (227, 197, 56)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('Jak grać?', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=self.WIDTH // 2 - rendered.get_width() // 2, y=150, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+        self.font_size = 40
+        rendered = font.render('Lewo - A   Prawo - D', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=self.WIDTH // 2 - rendered.get_width() // 2, y=260, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+
+        rendered = font.render('Skok - SPACJA', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=self.WIDTH // 2 - rendered.get_width() // 2, y=330, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+
+        rendered = font.render('Portale - PPM, LPM', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=self.WIDTH // 2 - rendered.get_width() // 2, y=400, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+
+        self.button_back_to_menu = grarantanna_button.Button(x=self.WIDTH // 2, y=650, target=self.back_to_menu,
+                                                             width=360, height=60, text='wróć do menu',
+                                                             font_grow_ratio=1.2,
+                                                             bg_color=self.bg_color, folder_index=1)
+
+        self.add_updatable(self.button_back_to_menu)
+
+    def back_to_menu(self):
+        self.game.show_screen = 0
 
 
 class Menu(game_class.Game):
@@ -170,6 +209,27 @@ class Menu(game_class.Game):
         self.button_settings = grarantanna_button.Button(x=self.WIDTH // 2, y=700, target=self.settings, width=240,
                                                          height=60, text='ustawienia',
                                                          bg_color=self.bg_color, folder_index=0)
+        self.font_size = 30
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('autorzy:', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=975, y=600, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('Mateusz Kołpa', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=975, y=630, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('Stanisław Fiedler', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=975, y=660, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
+        font = pygame.font.Font(self.font_name, self.font_size)
+        rendered = font.render('Wikor Kamzela', True, self.font_color)
+        self.text = basic_classes.DrawableObj(x=975, y=690, sprites=[rendered],
+                                              width=rendered.get_width(), height=rendered.get_height())
+        self.add_drawable(self.text)
 
         self.add_updatable(self.button_start)
         self.add_updatable(self.button_select_level)
@@ -558,11 +618,21 @@ class Settings(game_class.Game):
 
         self.add_updatable(self.button_back_to_menu)
 
+        self.button_jak_grac = grarantanna_button.Button(x=self.WIDTH // 2, y=575, target=self.jak_grac,
+                                                             width=360, height=60, text='Jak grac?',
+                                                             font_grow_ratio=1.2,
+                                                             bg_color=self.bg_color, folder_index=1)
+
+        self.add_updatable(self.button_jak_grac)
+
         self.volume_slider = grarantanna_slider.Slider(x=self.WIDTH // 2, y=350, text='Głośność')
         self.add_updatable(self.volume_slider)
 
     def back_to_menu(self):
         self.game.show_screen = 0
+
+    def jak_grac(self):
+        self.game.show_screen = 9
 
 
 class Settings_in_game(game_class.Game):
