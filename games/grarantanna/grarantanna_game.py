@@ -16,7 +16,7 @@ class Grarantanna(game_class.Game):
         self.show_screen = 0
         self.level_name = ''
         self.przyslowia = [
-            'KUĆ ŻELAZO, PUKI GORĄCE',  # Poziom 1
+            'KUĆ ŻELAZO, PÓKI GORĄCE',  # Poziom 1
             'CO NAGLE, TO PO DIABLE',  # Poziom 2
             'KRADZIONE NIE TUCZY',  # Poziom 3
             'KTO PYTA, NIE BŁĄDZI',  # Poziom 4
